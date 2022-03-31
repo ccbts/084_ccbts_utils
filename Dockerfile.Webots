@@ -1,0 +1,146 @@
+FROM cyberbotics/webots:R2022a-ubuntu20.04
+
+# Taken from Emiliano Borghi
+LABEL maintainer="Alexandros Nikolaou"
+
+ENV USER=cocobots
+ENV NVIDIA_DRIVER_CAPABILITIES ${NVIDIA_DRIVER_CAPABILITIES},display
+
+# install packages
+RUN apt-get update && apt-get -q -y install --no-install-recommends \
+    bash-completion \
+    dirmngr \
+    gnupg2 \
+    lsb-release \
+    python3-pip \
+    sudo \
+    tmux \
+    wget \
+    unzip \
+    git \
+    software-properties-common \
+    && rm -rf /var/lib/apt/lists/*
+
+# Already installed:
+# curl \
+# timezone
+# I'm not sure for language
+
+# Create a user with passwordless sudo
+USER root
+RUN adduser --gecos "Development User" --disabled-password -u 1000 $USER
+RUN adduser $USER sudo
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+# https://cyberbotics.com/doc/guide/running-extern-robot-controllers#running-extern-robot-controllers
+ENV PYTHONPATH=${PYTHONPATH}:${WEBOTS_HOME}/lib/controller/python3
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${WEBOTS_HOME}/lib/controller
+
+# Audio support
+RUN usermod -aG audio $USER
+RUN apt-get update && apt-get install -y alsa-utils
+
+# ROS 2 Foxy
+
+# setup keys
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+
+# setup sources.list
+RUN echo "deb http://packages.ros.org/ros2/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros2-latest.list
+
+# setup environment
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+
+ENV ROS_DISTRO foxy
+
+# install ros2 packages
+RUN apt-get update && apt-get install -y \
+    ros-foxy-ros-base \
+    ros-foxy-webots-ros2 \
+    ~nros-foxy-rqt*
+
+# install bootstrap tools
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    build-essential \
+    git \
+    python3-colcon-common-extensions \
+    python3-colcon-mixin \
+    python3-rosdep \
+    python3-vcstool \
+    && rm -rf /var/lib/apt/lists/*
+
+# install python packages
+RUN pip3 install -U \
+    argcomplete \
+    flake8 \
+    flake8-blind-except \
+    flake8-builtins \
+    flake8-class-newline \
+    flake8-comprehensions \
+    flake8-deprecated \
+    flake8-docstrings \
+    flake8-import-order \
+    flake8-quotes \
+    pytest-repeat \
+    pytest-rerunfailures
+# This is a workaround for pytest not found causing builds to fail
+# Following RUN statements tests for regression of https://github.com/ros2/ros2/issues/722
+RUN pip3 freeze | grep pytest \
+    && python3 -m pytest --version
+
+ENV ROS_DISTRO=foxy
+ENV AMENT_PREFIX_PATH=/opt/ros/foxy
+ENV COLCON_PREFIX_PATH=/opt/ros/foxy
+ENV LD_LIBRARY_PATH=/opt/ros/foxy/lib
+ENV PATH=/opt/ros/foxy/bin:$PATH
+ENV PYTHONPATH=/opt/ros/foxy/lib/python3.8/site-packages
+ENV ROS_PYTHON_VERSION=3
+ENV ROS_VERSION=2
+
+################
+# Expose the nvidia driver to allow opengl 
+# Dependencies for glvnd and X11.
+################
+RUN apt-get update \
+ && apt-get install -y -qq --no-install-recommends \
+  libglvnd0 \
+  libgl1 \
+  libglx0 \
+  libegl1 \
+  libxext6 \
+  libx11-6
+
+# Env vars for the nvidia-container-runtime.
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES graphics,utility,compute
+ENV QT_X11_NO_MITSHM 1
+
+# resolve a missing dependency for webots demo
+RUN apt-get update && apt-get install -y \
+		libxtst6 \
+		&& apt-get clean \
+		&& rm -rf /var/lib/apt/lists/*
+
+# Permissions to workspace
+RUN mkdir -p /cocobots_ws
+RUN chown -R $USER:$USER /cocobots_ws
+
+# Webots config
+RUN mkdir -p /home/$USER/.config/Cyberbotics
+COPY --chown=$USER:$USER Webots-R2022a.conf /home/$USER/.config/Cyberbotics/Webots-R2022a.conf
+
+# Tmux config
+# COPY --chown=$USER:$USER .tmux.conf /home/$USER/.tmux.conf
+
+# rosdep
+RUN apt-get update
+RUN rosdep init
+
+USER $USER
+RUN rosdep update
+
+# setup ros2 environment
+RUN echo ". /opt/ros/foxy/setup.bash" >> /home/$USER/.bashrc
+ENV COLCON_SETUP_BASH "/cocobots_ws/install/local_setup.bash"
+RUN echo "[[ -f ${COLCON_SETUP_BASH} ]] && . ${COLCON_SETUP_BASH}" >> /home/$USER/.bashrc
