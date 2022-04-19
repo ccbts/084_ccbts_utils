@@ -1,10 +1,10 @@
-FROM cyberbotics/webots:R2022a-ubuntu20.04
+FROM osrf/ros:foxy-desktop
 
 # Taken from Emiliano Borghi
 LABEL maintainer="Alexandros Nikolaou"
 
+ENV DEBIAN_FRONTEND=noninteractive
 ENV USER=cocobots
-ENV NVIDIA_DRIVER_CAPABILITIES ${NVIDIA_DRIVER_CAPABILITIES},display
 
 # install packages
 RUN apt-get update && apt-get -q -y install --no-install-recommends \
@@ -27,14 +27,14 @@ RUN apt-get update && apt-get -q -y install --no-install-recommends \
 # I'm not sure for language
 
 # Create a user with passwordless sudo
+# Create a user in the container that share the same rights as the host user
 USER root
 RUN adduser --gecos "Development User" --disabled-password -u 1000 $USER
 RUN adduser $USER sudo
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-# https://cyberbotics.com/doc/guide/running-extern-robot-controllers#running-extern-robot-controllers
-ENV PYTHONPATH=${PYTHONPATH}:${WEBOTS_HOME}/lib/controller/python3
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${WEBOTS_HOME}/lib/controller
+# Change HOME environment variable
+ENV HOME /home/${USER} 
 
 # Audio support
 RUN usermod -aG audio $USER
@@ -104,31 +104,12 @@ ENV ROS_VERSION=2
 ################
 RUN apt-get update \
  && apt-get install -y -qq --no-install-recommends \
-  libglvnd0 \
-  libgl1 \
-  libglx0 \
-  libegl1 \
   libxext6 \
   libx11-6
 
-# Env vars for the nvidia-container-runtime.
-ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES graphics,utility,compute
-ENV QT_X11_NO_MITSHM 1
-
-# resolve a missing dependency for webots demo
-RUN apt-get update && apt-get install -y \
-		libxtst6 \
-		&& apt-get clean \
-		&& rm -rf /var/lib/apt/lists/*
-
 # Permissions to workspace
-RUN mkdir -p /cocobots_ws
-RUN chown -R $USER:$USER /cocobots_ws
-
-# Webots config
-RUN mkdir -p /home/$USER/.config/Cyberbotics
-COPY --chown=$USER:$USER Webots-R2022a.conf /home/$USER/.config/Cyberbotics/Webots-R2022a.conf
+RUN mkdir -p ${HOME}/cocobots_ws/src
+RUN chown -R $USER:$USER ${HOME}/cocobots_ws
 
 # Tmux config
 # COPY --chown=$USER:$USER .tmux.conf /home/$USER/.tmux.conf
@@ -144,3 +125,14 @@ RUN rosdep update
 RUN echo ". /opt/ros/foxy/setup.bash" >> /home/$USER/.bashrc
 ENV COLCON_SETUP_BASH "/cocobots_ws/install/local_setup.bash"
 RUN echo "[[ -f ${COLCON_SETUP_BASH} ]] && . ${COLCON_SETUP_BASH}" >> /home/$USER/.bashrc
+
+
+# TODO
+# Create a launch.sh -> Integrated into the docker-compose
+# Create a build.sh -> Integrated into the docker-compose
+# Create docker-compose for non webots -> Done
+# When some packages will be created, fix entrypoint and docker-compose
+
+# X11 only for Windows > Change the file if for not Windows?!
+# The file will create the cocobots_ws/src
+

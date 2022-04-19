@@ -1,11 +1,11 @@
 version: '3.4'
   
 services:
-  # Simulation
+  # ROS2 and Webots with Nvidia support
   webots_simulation:
     build:
       context: .
-      dockerfile: Dockerfile.Webots
+      dockerfile: Dockerfile.ROS2WebotsNvidia
       network: host
     # command: bash -c ". /entrypoint.sh create2_description spawn_robot.launch.py"
     container_name: webots_simulation
@@ -30,4 +30,29 @@ services:
     volumes:
       - /home/$USER/cocobots_ws/src:/cocobots_ws/src:rw
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./entrypoint.sh:/entrypoint.sh
+    working_dir: /cocobots_ws
+
+
+  # ROS2 only
+  ros2:
+    build:
+      context: .
+      dockerfile: Dockerfile.ROS2
+      network: host
+    # command: bash -c ". /entrypoint.sh create2_description spawn_robot.launch.py"
+    container_name: ros2
+    devices:
+      - /dev/snd
+    environment:
+      # - DISPLAY=$DISPLAY
+      - QT_X11_NO_MITSHM=1
+    privileged: true
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    user: cocobots
+    volumes:
+      - /home/$USER/cocobots_ws/src:/cocobots_ws/src:rw
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./entrypoint.sh:/entrypoint.sh
     working_dir: /cocobots_ws
