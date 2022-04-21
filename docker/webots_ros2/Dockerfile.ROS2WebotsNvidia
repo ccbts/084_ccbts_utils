@@ -1,16 +1,15 @@
-FROM osrf/ros:foxy-desktop
+FROM cyberbotics/webots:R2022a-ubuntu20.04
 
 # Taken from Emiliano Borghi
 LABEL maintainer="Alexandros Nikolaou"
 
-ENV DEBIAN_FRONTEND=noninteractive
 ENV USER=cocobots
+ENV NVIDIA_DRIVER_CAPABILITIES ${NVIDIA_DRIVER_CAPABILITIES},display
 
 # install packages
 RUN apt-get update && apt-get -q -y install --no-install-recommends \
     bash-completion \
     dirmngr \
-    gnupg2 \
     lsb-release \
     python3-pip \
     sudo \
@@ -22,12 +21,9 @@ RUN apt-get update && apt-get -q -y install --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Already installed:
-# curl \
 # timezone
-# I'm not sure for language
 
 # Create a user with passwordless sudo
-# Create a user in the container that share the same rights as the host user
 USER root
 RUN adduser --gecos "Development User" --disabled-password -u 1000 $USER
 RUN adduser $USER sudo
@@ -35,6 +31,10 @@ RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Change HOME environment variable
 ENV HOME /home/${USER} 
+
+# https://cyberbotics.com/doc/guide/running-extern-robot-controllers#running-extern-robot-controllers
+ENV PYTHONPATH=${PYTHONPATH}:${WEBOTS_HOME}/lib/controller/python3
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${WEBOTS_HOME}/lib/controller
 
 # Audio support
 RUN usermod -aG audio $USER
@@ -49,9 +49,6 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C1CF6E31E6
 RUN echo "deb http://packages.ros.org/ros2/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros2-latest.list
 
 # setup environment
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
-
 ENV ROS_DISTRO foxy
 
 # install ros2 packages
@@ -104,12 +101,31 @@ ENV ROS_VERSION=2
 ################
 RUN apt-get update \
  && apt-get install -y -qq --no-install-recommends \
+  libglvnd0 \
+  libgl1 \
+  libglx0 \
+  libegl1 \
   libxext6 \
   libx11-6
+
+# Env vars for the nvidia-container-runtime.
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES graphics,utility,compute
+ENV QT_X11_NO_MITSHM 1
+
+# resolve a missing dependency for webots demo
+RUN apt-get update && apt-get install -y \
+		libxtst6 \
+		&& apt-get clean \
+		&& rm -rf /var/lib/apt/lists/*
 
 # Permissions to workspace
 RUN mkdir -p ${HOME}/cocobots_ws/src
 RUN chown -R $USER:$USER ${HOME}/cocobots_ws
+
+# Webots config
+RUN mkdir -p /home/$USER/.config/Cyberbotics
+COPY --chown=$USER:$USER Webots-R2022a.conf /home/$USER/.config/Cyberbotics/Webots-R2022a.conf
 
 # Tmux config
 # COPY --chown=$USER:$USER .tmux.conf /home/$USER/.tmux.conf
@@ -126,13 +142,9 @@ RUN echo ". /opt/ros/foxy/setup.bash" >> /home/$USER/.bashrc
 ENV COLCON_SETUP_BASH "/cocobots_ws/install/local_setup.bash"
 RUN echo "[[ -f ${COLCON_SETUP_BASH} ]] && . ${COLCON_SETUP_BASH}" >> /home/$USER/.bashrc
 
+# Not sure for this. To initialize the workspace:
+WORKDIR ${HOME}/cocobots_ws
+RUN /bin/bash -c "source source /opt/ros/${ROS_DISTRO}/setup.bash; colcon build --symlink-install"
 
-# TODO
-# Create a launch.sh -> Integrated into the docker-compose
-# Create a build.sh -> Integrated into the docker-compose
-# Create docker-compose for non webots -> Done
-# When some packages will be created, fix entrypoint and docker-compose
-
-# X11 only for Windows > Change the file if for not Windows?!
-# The file will create the cocobots_ws/src
-
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["bash"]
