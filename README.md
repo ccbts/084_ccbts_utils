@@ -39,7 +39,7 @@ sudo ./docker/ros2/setup_project.sh
 ```
 5. Build the docker (May need "sudo"):
 ```
-docker-compose -f docker/ros2/docker-compose.yaml build
+docker-compose -f cocobots_docker/ros2/docker-compose.yaml build
 ```
 6. Run the docker (May need "sudo"):
 ```
@@ -76,11 +76,11 @@ sudo ./docker/ros2/setup_project.sh
 ```
 5. Build the docker:
 ```
-docker-compose -f docker/webots_ros2/docker-compose.yaml build
+docker-compose -f cocobots_docker/webots_ros2/docker-compose.yaml build
 ```
 6. Run the docker (May need "sudo"):
 ```
-docker run --gpus=all -it -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw cocobots_ws_webots_simulation
+docker run --gpus=all -it -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw webots_ros2_webots_simulation
 ```
 7. Make sure that ROS2 is installed and run properly, by typing any ROS2 command like:
 ```
