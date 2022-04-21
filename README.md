@@ -29,13 +29,13 @@ Installation instructions below
 
 1. Create a folder in the home directory and name it "cocobots_ws". This will be your workspace directory
 2. Open a terminal and enter the cocobots_ws directory.
-3. Git clone the [cocobots repository](https://github.com/alexandrosnic/cocobots_docker) in the root of your workspace folder:
+3. Git clone the [cocobots repository](https://github.com/alexandrosnic/cocobots_docker) in the root of your workspace folder (cocobots_ws):
 ```
 git clone https://github.com/alexandrosnic/cocobots_docker
 ```
 4. Install the dependencies
 ```
-sudo ./docker/ros2/setup_project.sh
+sudo ./cocobots_docker/ros2/setup_project.sh
 ```
 5. Build the docker (May need "sudo"):
 ```
@@ -66,13 +66,13 @@ Installation instructions below
 
 1. Create a folder in the home directory and name it "cocobots_ws". This will be your workspace directory
 2. Open a terminal and enter the cocobots_ws directory.
-3. Git clone the [cocobots repository](https://github.com/alexandrosnic/cocobots_docker) in the root of your workspace folder:
+3. Git clone the [cocobots repository](https://github.com/alexandrosnic/cocobots_docker) in the root of your workspace folder (cocobots_ws):
 ```
 git clone https://github.com/alexandrosnic/cocobots_docker
 ```
 4. Install the dependencies
 ```
-sudo ./docker/ros2/setup_project.sh
+sudo ./cocobots_docker/ros2/setup_project.sh
 ```
 5. Build the docker:
 ```
