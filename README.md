@@ -43,11 +43,15 @@ docker-compose -f cocobots_docker/ros2/docker-compose.yaml build
 ```
 6. Run the docker (May need "sudo"):
 ```
-rocker --devices /dev/dri/card --x11 ros2_ros2:latest
+rocker --devices /dev/dri/card --x11 ros2_custom
 ```
 7. Make sure that ROS2 is installed and run properly, by typing any ROS2 command like:
 ```
 ros2 --help
+```
+To run webots:
+```
+webots --no-sandbox
 ```
 
 ## b. ROS2 + Webots on NVidia docker
@@ -80,9 +84,49 @@ docker-compose -f cocobots_docker/webots_ros2/docker-compose.yaml build
 ```
 6. Run the docker (May need "sudo"):
 ```
-docker run --gpus=all -it -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw webots_ros2_webots_simulation
+docker run --gpus=all -it -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw ros2_webots
 ```
 7. Make sure that ROS2 is installed and run properly, by typing any ROS2 command like:
 ```
 ros2 --help
+```
+
+## b. ROS2 + Webots without NVidia docker
+
+### Prerequisites
+
+* [docker](https://docs.docker.com/engine/install/ubuntu/)
+* [docker-compose](https://docs.docker.com/compose/install/)
+* [rocker](https://github.com/osrf/rocker)
+* (If installed on Windows WSL, then you will probably need an Xserver as well, eg [VcXsrvs](https://sourceforge.net/projects/vcxsrv/))
+
+Installation instructions below
+
+### Installation for ROS2
+
+1. Create a folder in the home directory and name it "cocobots_ws". This will be your workspace directory
+2. Open a terminal and enter the cocobots_ws directory.
+3. Git clone the [cocobots repository](https://github.com/alexandrosnic/cocobots_docker) in the root of your workspace folder (cocobots_ws):
+```
+git clone https://github.com/alexandrosnic/cocobots_docker
+```
+4. Install the dependencies
+```
+sudo ./cocobots_docker/ros2/setup_project.sh
+```
+5. Pull the docker:
+```
+pull docker alexnic/ros2_webots_nonvidia:version1
+```
+6. Run the docker (May need "sudo"):
+```
+rocker --devices /dev/dri/card --x11 ros2_webots_nonvidia:version1
+```
+7. Make sure that ROS2 is installed and run properly, by typing any ROS2 command like:
+```
+ros2 --help
+```
+8. To run webots:
+```
+webots --no-sandbox
 ```

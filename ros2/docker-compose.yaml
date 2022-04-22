@@ -9,6 +9,7 @@ services:
       network: host
     # command: bash -c ". /entrypoint.sh create2_description spawn_robot.launch.py"
     container_name: ros2
+    image: ros2_custom
     devices:
       - /dev/snd
     environment:
