@@ -91,7 +91,7 @@ docker run --gpus=all -it -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw ros2_we
 ros2 --help
 ```
 
-## b. ROS2 + Webots without NVidia docker
+## c. ROS2 + Webots without NVidia docker
 
 ### Prerequisites
 
@@ -130,3 +130,7 @@ ros2 --help
 ```
 webots --no-sandbox
 ```
+
+<!-- TODO
+
+Run Dockerfile2 -->
