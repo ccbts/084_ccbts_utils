@@ -31,7 +31,7 @@ Installation instructions below
 2. Open a terminal and enter the cocobots_ws directory.
 3. Git clone the [cocobots repository](https://github.com/alexandrosnic/cocobots_docker) in the root of your workspace folder (cocobots_ws):
 ```
-git clone https://github.com/alexandrosnic/cocobots_docker
+git clone https://alexandrosnic@bitbucket.org/dsgbielefeld/084_cocobots_docker.git
 ```
 4. Install the dependencies
 ```
@@ -72,11 +72,11 @@ Installation instructions below
 2. Open a terminal and enter the cocobots_ws directory.
 3. Git clone the [cocobots repository](https://github.com/alexandrosnic/cocobots_docker) in the root of your workspace folder (cocobots_ws):
 ```
-git clone https://github.com/alexandrosnic/cocobots_docker
+git clone https://alexandrosnic@bitbucket.org/dsgbielefeld/084_cocobots_docker.git
 ```
 4. Install the dependencies
 ```
-sudo ./cocobots_docker/ros2/setup_project.sh
+sudo ./cocobots_docker/webots_ros2/setup_project.sh
 ```
 5. Build the docker:
 ```
@@ -108,7 +108,7 @@ Installation instructions below
 2. Open a terminal and enter the cocobots_ws directory.
 3. Git clone the [cocobots repository](https://github.com/alexandrosnic/cocobots_docker) in the root of your workspace folder (cocobots_ws):
 ```
-git clone https://github.com/alexandrosnic/cocobots_docker
+git clone https://alexandrosnic@bitbucket.org/dsgbielefeld/084_cocobots_docker.git
 ```
 4. Install the dependencies
 ```
@@ -130,7 +130,10 @@ ros2 --help
 ```
 webots --no-sandbox
 ```
+<<<<<<< HEAD
 
 <!-- TODO
 
 Run Dockerfile2 -->
+=======
+>>>>>>> d4e767def14af21e368e392bc04eb7c89e1a92e3
