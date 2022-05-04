@@ -76,7 +76,7 @@ git clone https://github.com/alexandrosnic/cocobots_docker
 ```
 4. Install the dependencies
 ```
-sudo ./cocobots_docker/ros2/setup_project.sh
+sudo ./cocobots_docker/webots_ros2/setup_project.sh
 ```
 5. Build the docker:
 ```
@@ -91,7 +91,7 @@ docker run --gpus=all -it -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw ros2_we
 ros2 --help
 ```
 
-## b. ROS2 + Webots without NVidia docker
+## c. ROS2 + Webots without NVidia docker
 
 ### Prerequisites
 

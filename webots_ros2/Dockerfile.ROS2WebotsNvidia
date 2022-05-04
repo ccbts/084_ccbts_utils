@@ -17,6 +17,7 @@ RUN apt-get update && apt-get -q -y install --no-install-recommends \
     wget \
     unzip \
     git \
+    apt-utils \
     software-properties-common \
     && rm -rf /var/lib/apt/lists/*
 
@@ -55,6 +56,7 @@ ENV ROS_DISTRO foxy
 RUN apt-get update && apt-get install -y \
     ros-foxy-ros-base \
     ros-foxy-webots-ros2 \
+    ros-foxy-webots-ros2-driver \
     ~nros-foxy-rqt*
 
 # install bootstrap tools
@@ -89,7 +91,7 @@ RUN pip3 freeze | grep pytest \
 ENV ROS_DISTRO=foxy
 ENV AMENT_PREFIX_PATH=/opt/ros/foxy
 ENV COLCON_PREFIX_PATH=/opt/ros/foxy
-ENV LD_LIBRARY_PATH=/opt/ros/foxy/lib
+# ENV LD_LIBRARY_PATH=/opt/ros/foxy/lib
 ENV PATH=/opt/ros/foxy/bin:$PATH
 ENV PYTHONPATH=/opt/ros/foxy/lib/python3.8/site-packages
 ENV ROS_PYTHON_VERSION=3
