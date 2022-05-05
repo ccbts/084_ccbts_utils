@@ -7,8 +7,8 @@ To install WSL2 in Windows, follow the above installation instructions:
 
 If you work on Windows, follow these guidelines to install WSL2:
 
-<details>
-  <summary>Click to expand!</summary>
+<!-- <details>
+  <summary>Click to expand!</summary> -->
   
 ## Install WSL2
 1. Open cmd with administrator rights
@@ -27,20 +27,24 @@ wsl --install
 3. From the green icon on the left-down corner, choose "New WSL Window"
 4. You can now interact with the Ubuntu documents and terminal
 
-</details>
+<!-- </details> -->
 
 
-This repository contains three options. Follow either of the following instructions:
+This repository contains three options. 
+* ROS2 Foxy
+* ROS2 Foxy - Webots (With Nvidia)
+* ROS2 Foxy - Webots (Without Nvidia)
 
+Follow either of the following instructions:
 
-## 1. ROS2 Foxy
+## I. ROS2 Foxy
 
 A ROS2 Foxy (docker) setup with all the required dependencies for this project, in a non-GPU accelerated Ubuntu 20.04. 
 
-<details>
-  <summary>Click to expand!</summary>
+<!-- <details>
+  <summary>Click to expand!</summary> 
   
-## I. Only ROS2 docker
+## I. Only ROS2 docker -->
 
 ### Prerequisites
 
@@ -81,16 +85,16 @@ To run webots:
 webots --no-sandbox
 ```
 
-</details>
+<!-- </details> -->
 
-## 2. ROS2 Foxy - Webots (With Nvidia)
+## II. ROS2 Foxy - Webots (With Nvidia)
 
 A ROS2 Foxy (docker) setup with all the required dependencies for this project (and it will be updated on the go), coupled with Webots simulator R2022a in a GPU accelerated Ubuntu 20.04 environment. 
 
-<details>
+<!-- <details>
   <summary>Click to expand!</summary>
   
-## II. ROS2 + Webots on NVidia docker
+## II. ROS2 + Webots on NVidia docker -->
 
 ### Prerequisites
 
@@ -128,16 +132,16 @@ cd cocobots_ws/src/
 git clone https://alexandrosnic@bitbucket.org/dsgbielefeld/085_cocobots_environment.git
 ```
 
-</details>
+<!-- </details> -->
 
-## 3. ROS2 Foxy - Webots (Without Nvidia)
+## III. ROS2 Foxy - Webots (Without Nvidia)
 
 A ROS2 Foxy (docker) setup with all the required dependencies for this project (and it will be updated on the go), coupled with Webots simulator R2022a in a non-GPU Ubuntu 20.04  environment. 
 
-<details>
+<!-- <details>
   <summary>Click to expand!</summary>
   
-## III. ROS2 + Webots without NVidia docker
+## III. ROS2 + Webots without NVidia docker -->
 
 ### Prerequisites
 
@@ -177,7 +181,7 @@ ros2 --help
 webots --no-sandbox
 ```
 
-</details>
+<!-- </details> -->
 
 Webots works with Linux (it  doesn't run on Ubuntu versions earlier than 18.04), Windows 8 and 10 (and 11?) and Mac (10.15 "Catalina" and 10.14 "Mojave"). It needs an NVIDIA or AMD OpenGL.
 
