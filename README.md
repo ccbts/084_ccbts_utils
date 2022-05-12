@@ -60,9 +60,9 @@ mkdir -p cocobots_ws
 chown -R $USER:$USER home/$USER/cocobots_ws
 cd cocobots_ws
 ```
-2. Git clone the [cocobots repository](https://bitbucket.org/dsgbielefeld/084_cocobots_docker/src/master/) in the root of your workspace folder (cocobots_ws):
+2. Git clone the [cocobots repository](https://github.com/ccbts/084_ccbts-utils) in the root of your workspace folder (cocobots_ws):
 ```
-git clone https://alexandrosnic@bitbucket.org/dsgbielefeld/084_cocobots_docker.git
+git clone https://github.com/ccbts/084_ccbts-utils.git
 ```
 3. Install the dependencies
 * If there is GPU on the system:
@@ -132,9 +132,9 @@ mkdir -p cocobots_ws/src
 chown -R $USER:$USER home/$USER/cocobots_ws
 cd cocobots_ws
 ```
-2. Git clone the [cocobots repository](https://bitbucket.org/dsgbielefeld/084_cocobots_docker/src/master/) in the root of your workspace folder (cocobots_ws):
+2. Git clone the [cocobots repository](https://github.com/ccbts/084_ccbts-utils) in the root of your workspace folder (cocobots_ws):
 ```
-git clone https://alexandrosnic@bitbucket.org/dsgbielefeld/084_cocobots_docker.git
+git clone https://github.com/ccbts/084_ccbts-utils.git
 ```
 3. Install the dependencies
 ```
@@ -193,9 +193,9 @@ mkdir -p cocobots_ws
 chown -R $USER:$USER home/$USER/cocobots_ws
 cd cocobots_ws
 ```
-2. Git clone the [cocobots repository](https://bitbucket.org/dsgbielefeld/084_cocobots_docker/src/master/) in the root of your workspace folder (cocobots_ws):
+2. Git clone the [cocobots repository](https://github.com/ccbts/084_ccbts-utils) in the root of your workspace folder (cocobots_ws):
 ```
-git clone https://alexandrosnic@bitbucket.org/dsgbielefeld/084_cocobots_docker.git
+git clone https://github.com/ccbts/084_ccbts-utils.git
 ```
 3. Install the dependencies
 ```
