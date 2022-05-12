@@ -1,95 +1,43 @@
 # Cocobots Repository
 
-This repository was developed on an Ubuntu 20.04, with Nvidia GPU (CUDA 11.6). It is supposed to work for Ubuntu 20.04 or Windows WSL, but it hasn't been tested on MacOS. 
-To install WSL2 in Windows, follow the above installation instructions:
+This repository consists of dockerfiles to installation instructions for ROS2 and Webots. 
 
-## Windows WSL2 Installation
+## System requirements
 
-If you work on Windows, follow these guidelines to install WSL2:
+It is highly recommended to run Webots on a supported [GPU](https://www.cyberbotics.com/doc/guide/system-requirements), however, it can also work without a graphics card.
+For this, make sure you have, or update to the latest GPU drives from [here](https://www.nvidia.com/download/index.aspx).
 
-<!-- <details>
-  <summary>Click to expand!</summary> -->
-  
-## Install WSL2
-1. Open cmd with administrator rights
-2. Install wsl and then restart:
-```
-wsl --install
-```
-3. Follow the instructions to install Ubuntu 20.04
+The following operating systems are supported:
+* Linux (preferred)
+* Windows through Windows Subsystem for Linux (WSL). To install WSL, follow these [guidelines](https://docs.microsoft.com/en-us/windows/wsl/install). A current limitation is that [nvidia-docker2](https://docs.nvidia.com/cuda/wsl-user-guide/index.html#known-limitations-for-linux-cuda-apps) for WSL is still under development and for that reason ROS2 and Webots can only be installed through docker without GPU support. For a GPU system a bash script will be provided instead of docker. 
+* Mac (currently doesn't work properly)
 
-## Install Docker Desktop for Windows
-1. [Docker Desktop](https://docs.docker.com/desktop/windows/install/)
+<!-- ## Dependencies
+* For WSL, install [Docker](https://docs.docker.com/get-docker/) 
 
 ## [Optionally] Configure WSL2 through Visual Studio Code
 1. Download and install [Visual Studio Code (VSC)](https://code.visualstudio.com/download)
 2. Open VSC and download the "Remote - WSL" and "Remote - Containers" extensions from the Extensions tab on the left hand side.
 3. From the green icon on the left-down corner, choose "New WSL Window"
-4. You can now interact with the Ubuntu documents and terminal
+4. You can now interact with the Ubuntu documents and terminal -->
 
 <!-- </details> -->
 
+## Installation guidelines
 
 This repository contains three options. 
-* ROS2 Foxy
-* ROS2 Foxy - Webots (With Nvidia)
-* ROS2 Foxy - Webots (Without Nvidia)
+* **I. ROS2 Foxy - Webots on Ubuntu (with or without GPU)**
+* **II. ROS2 Foxy - Webots on WSL (with or without GPU)**
+* **III. ROS2 Foxy - Webots on Mac**
 
-Follow either of the following instructions:
+Follow the one suitable for your System:
 
-## I. ROS2 Foxy
-
-A ROS2 Foxy (docker) setup with all the required dependencies for this project, in a non-GPU accelerated Ubuntu 20.04. 
-
-<!-- <details>
-  <summary>Click to expand!</summary> 
-  
-## I. Only ROS2 docker -->
-
-### Prerequisites
-
-* [docker](https://docs.docker.com/engine/install/ubuntu/)
-* [docker-compose](https://docs.docker.com/compose/install/)
-* [rocker](https://github.com/osrf/rocker)
-* (If installed on Windows WSL, then you will probably need an Xserver as well, eg [VcXsrvs](https://sourceforge.net/projects/vcxsrv/))
-
-Installation instructions below
-
-### Installation for ROS2
-
-1. Choose the folder in which to save the repository (eg in a "cocobots" folder
-2. Open a terminal and enter that directory (cocobots).
-3. Git clone the [cocobots repository](https://github.com/alexandrosnic/cocobots_docker):
-```
-git clone https://alexandrosnic@bitbucket.org/dsgbielefeld/084_cocobots_docker.git
-```
-It will prompt you to enter the bitbucket password
-4. Install the dependencies
-```
-sudo ./084_cocobots_docker/ros2/setup_project.sh
-```
-5. Build the docker (May need "sudo"):
-```
-docker-compose -f 084_cocobots_docker/ros2/docker-compose.yaml build
-```
-6. Run the docker (May need "sudo"):
-```
-rocker --devices /dev/dri/card --x11 ros2_custom
-```
-7. Make sure that ROS2 is installed and run properly, by typing any ROS2 command like:
-```
-ros2 --help
-```
-To run webots:
-```
-webots --no-sandbox
-```
 
 <!-- </details> -->
 
-## II. ROS2 Foxy - Webots (With Nvidia)
+## I. ROS2 Foxy - Webots on Ubuntu (with or without GPU)
 
-A ROS2 Foxy (docker) setup with all the required dependencies for this project (and it will be updated on the go), coupled with Webots simulator R2022a in a GPU accelerated Ubuntu 20.04 environment. 
+A ROS2 Foxy (docker) setup with all the required dependencies for this project (and it will be updated on the go), coupled with Webots simulator R2022a in a Ubuntu 20.04 environment. The setup may work with or without GPU (follow the corresponding guidelines). 
 
 <!-- <details>
   <summary>Click to expand!</summary>
@@ -98,45 +46,131 @@ A ROS2 Foxy (docker) setup with all the required dependencies for this project (
 
 ### Prerequisites
 
-* An Nvidia GPU
-* [docker](https://docs.docker.com/engine/install/ubuntu/)
+These tools will be installed in step 3. Ignore it if they are already installed 
+
+* [docker](https://docs.docker.com/engine/install/ubuntu/) (and make sure is running)
 * [docker-compose](https://docs.docker.com/compose/install/)
-* [docker-nvidia2](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) 
-* (If installed on Windows WSL, then you need an Xserver as well, eg VcXsrvs)
+* [docker-nvidia2](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
 
-Installation instructions below
+### Installation
 
-### Installation for ROS2 - Webots on Nvidia
-
-1. Create a folder in the home directory and name it "cocobots_ws". This will be your workspace directory
-2. Open a terminal and enter the cocobots_ws directory.
-3. Git clone the [cocobots repository](https://github.com/alexandrosnic/cocobots_docker) in the root of your workspace folder (cocobots_ws):
+1. Open a terminal, navigate in the 'home' directory, and create a folder "cocobots_ws". This will be your workspace directory
+```
+mkdir -p cocobots_ws
+chown -R $USER:$USER home/$USER/cocobots_ws
+cd cocobots_ws
+```
+2. Git clone the [cocobots repository](https://bitbucket.org/dsgbielefeld/084_cocobots_docker/src/master/) in the root of your workspace folder (cocobots_ws):
 ```
 git clone https://alexandrosnic@bitbucket.org/dsgbielefeld/084_cocobots_docker.git
 ```
-4. Install the dependencies
-```
-sudo ./084_cocobots_docker/webots_ros2/setup_project.sh
-```
-5. Build the docker:
-```
-docker-compose -f 084_cocobots_docker/webots_ros2/docker-compose.yaml build
-```
-6. Run the docker (May need "sudo"):
-```
-docker run --gpus=all -it -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw ros2_webots
-```
-7. By now, you already set up and can interact with ROS2 and Webots. If you also want to clone the cocobots repositories, then follow the rest instructions:
+3. Install the dependencies
+* If there is GPU on the system:
+  ```
+  sudo ./084_cocobots_docker/webots_ros2/setup_project_ubuntu_gpu.sh
+  ```
+* Otherwise:
+  ```
+  sudo ./084_cocobots_docker/webots_ros2/setup_project_ubuntu_nogpu.sh
+  ```
+4. Build the docker:
+  ```
+  docker-compose -f 084_cocobots_docker/webots_ros2/compose-ubuntu.yaml build
+  ```
+5. Run the docker (May need "sudo"):
+* If there is GPU on the system:
+  ```
+  docker run --gpus=all -it -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw ros2_webots
+  ```
+* Otherwise:
+  ```
+  rocker --devices /dev/dri/card --x11 ros2_webots
+  ```
+6. By now, you already set up and can interact with ROS2 and Webots in docker. If you also want to clone the cocobots repositories, then follow the rest instructions:
 ```
 cd cocobots_ws/src/
 git clone https://alexandrosnic@bitbucket.org/dsgbielefeld/085_cocobots_environment.git
+cd ..
+colcon build
+source install/local_setup.bash
 ```
+7. To launch the Cocobots world:
+```
+ros2 launch cocobots_simu cocobots_launch.py
+```
+
+
+
+## II. ROS2 Foxy - Webots on WSL (with or without GPU)
+
+A ROS2 Foxy setup with all the required dependencies for this project (and it will be updated on the go), coupled with Webots simulator R2022a in a WSL environment. 
+The setup may work with or without GPU (follow the corresponding guidelines). 
+
+<!-- <details>
+  <summary>Click to expand!</summary>
+  
+## II. ROS2 + Webots on NVidia docker -->
+
+### Prerequisites
+
+<!-- * [docker](https://docs.docker.com/engine/install/ubuntu/) (and make sure is running)
+* [docker-compose](https://docs.docker.com/compose/install/)
+* For WSL: [docker-nvidia2](https://docs.nvidia.com/cuda/wsl-user-guide/index.html) -->
+The nvidia-docker2 for WSL currently does not support OpenGL applications like Webots, thus, it cannot be installed through a docker. For that reason, that bash script of step 3 will be used instead, or ignore that step if already these tools are installed:
+
+* [ROS2 Foxy](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html)
+* [Webots](https://cyberbotics.com/doc/guide/installation-procedure#installing-the-debian-package-with-the-advanced-packaging-tool-apt)
+* Xserver running, eg [VcXsrvs](https://sourceforge.net/projects/vcxsrv/). To configure it, follow this [tutorial](https://techcommunity.microsoft.com/t5/windows-dev-appconsult/running-wsl-gui-apps-on-windows-10/ba-p/1493242)
+
+
+### Installation
+
+1. Open a terminal, navigate in the 'home' directory, and create a folder "cocobots_ws". This will be your workspace directory
+
+```
+mkdir -p cocobots_ws/src
+chown -R $USER:$USER home/$USER/cocobots_ws
+cd cocobots_ws
+```
+2. Git clone the [cocobots repository](https://bitbucket.org/dsgbielefeld/084_cocobots_docker/src/master/) in the root of your workspace folder (cocobots_ws):
+```
+git clone https://alexandrosnic@bitbucket.org/dsgbielefeld/084_cocobots_docker.git
+```
+3. Install the dependencies
+```
+sudo ./084_cocobots_docker/webots_ros2/setup_project_wsl.sh
+```
+4. Create the workspace
+```
+colcon build
+```
+5. Source the workspace (and do it every time you open a new terminal):
+```
+source install/setup.bash
+```
+6. By now, you already set up and can interact with ROS2 and Webots. If you also want to clone the cocobots repositories, then follow the rest instructions:
+```
+cd src/
+git clone https://alexandrosnic@bitbucket.org/dsgbielefeld/085_cocobots_environment.git
+cd ..
+colcon build
+source install/local_setup.bash
+```
+7. Configure the Xserver following this [tutorial](https://techcommunity.microsoft.com/t5/windows-dev-appconsult/running-wsl-gui-apps-on-windows-10/ba-p/1493242) (First option: VcXsrv Windows X Server). To avoid having to export the DISPLAY every time that WSL is launched, you can include the command at the end of the /etc/bash.bashrc file:
+```
+echo export DISPLAY="`grep nameserver /etc/resolv.conf | sed 's/nameserver //'`:0" >> /home/$USER/.bashrc
+```
+8. To launch the Cocobots world:
+```
+ros2 launch cocobots_simu cocobots_launch.py
+```
+
 
 <!-- </details> -->
 
-## III. ROS2 Foxy - Webots (Without Nvidia)
+## III. ROS2 Foxy - Webots on Mac
 
-A ROS2 Foxy (docker) setup with all the required dependencies for this project (and it will be updated on the go), coupled with Webots simulator R2022a in a non-GPU Ubuntu 20.04  environment. 
+A ROS2 Foxy (docker) setup with all the required dependencies for this project (and it will be updated on the go), coupled with Webots simulator R2022a in a non-GPU Mac environment. 
 
 <!-- <details>
   <summary>Click to expand!</summary>
@@ -145,61 +179,67 @@ A ROS2 Foxy (docker) setup with all the required dependencies for this project (
 
 ### Prerequisites
 
-* [docker](https://docs.docker.com/engine/install/ubuntu/)
+* [docker](https://docs.docker.com/engine/install/ubuntu/) (and make sure is running)
 * [docker-compose](https://docs.docker.com/compose/install/)
 * [rocker](https://github.com/osrf/rocker)
-* (If installed on Windows WSL, then you will probably need an Xserver as well, eg [VcXsrvs](https://sourceforge.net/projects/vcxsrv/))
+* Xserver, eg [XQuartz](https://www.xquartz.org/). To install and configure it, follow this [tutorial](https://affolter.net/running-a-docker-container-with-gui-on-mac-os/)
 
-Installation instructions below
+### Installation
 
-### Installation for ROS2
+1. Open a terminal, navigate in the 'home' directory, and create a folder "cocobots_ws". This will be your workspace directory
 
-1. Create a folder in the home directory and name it "cocobots_ws". This will be your workspace directory
-2. Open a terminal and enter the cocobots_ws directory.
-3. Git clone the [cocobots repository](https://github.com/alexandrosnic/cocobots_docker) in the root of your workspace folder (cocobots_ws):
+```
+mkdir -p cocobots_ws
+chown -R $USER:$USER home/$USER/cocobots_ws
+cd cocobots_ws
+```
+2. Git clone the [cocobots repository](https://bitbucket.org/dsgbielefeld/084_cocobots_docker/src/master/) in the root of your workspace folder (cocobots_ws):
 ```
 git clone https://alexandrosnic@bitbucket.org/dsgbielefeld/084_cocobots_docker.git
 ```
-4. Install the dependencies
+3. Install the dependencies
 ```
-sudo ./084_cocobots_docker/ros2/setup_project.sh
+sudo ./084_cocobots_docker/webots_ros2/setup_project_mac.sh
 ```
-5. Pull the docker:
+4. Build the docker:
+  ```
+  docker-compose -f 084_cocobots_docker/webots_ros2/compose-mac.yaml build
+  ```
+5. Run the docker (May need "sudo"):
+  ```
+  rocker --devices /dev/dri/card --x11 ros2_webots
+  ```
+6. By now, you already set up and can interact with ROS2 and Webots in docker. If you also want to clone the cocobots repositories, then follow the rest instructions:
 ```
-pull docker alexnic/ros2_webots_nonvidia:version1
+cd cocobots_ws/src/
+git clone https://alexandrosnic@bitbucket.org/dsgbielefeld/085_cocobots_environment.git
+cd ..
+colcon build
+source install/local_setup.bash
 ```
-6. Run the docker (May need "sudo"):
+7. To launch the Cocobots world:
 ```
-rocker --devices /dev/dri/card --x11 ros2_webots_nonvidia:version1
-```
-7. Make sure that ROS2 is installed and run properly, by typing any ROS2 command like:
-```
-ros2 --help
-```
-8. To run webots:
-```
-webots --no-sandbox
+ros2 launch cocobots_simu cocobots_launch.py
 ```
 
 <!-- </details> -->
 
-Webots works with Linux (it  doesn't run on Ubuntu versions earlier than 18.04), Windows 8 and 10 (and 11?) and Mac (10.15 "Catalina" and 10.14 "Mojave"). It needs an NVIDIA or AMD OpenGL.
-
-The repository was based on:
-[RoboticaUtnFrba Dockerfile](https://github.com/RoboticaUtnFrba/create2_docker) and
-[NIURoverTeam Dockerfile](https://github.com/NIURoverTeam/Dockerfiles/tree/master/webots_ros2_foxy)
 
 
 
 
 
+<!-- 
+TODO
+1. Write what it is to be done in Windows, what in WSL
+2. Clarify what is for Windows (WSL), what for ubuntu 
+3. For presentation, add the structure, workspace, package, favourite commands
+Nodes: A node is an executable that uses ROS to communicate with other nodes.
+Messages: ROS data type used when subscribing or publishing to a topic.
+Topics: Nodes can publish messages to a topic, as well as subscribe to a topic to receive messages.
+Packages: A way to organize software in ROS. A package can contain nodes, message definitions, libraries, datasets etc.
 
-
-
-<<<<<<< HEAD
-
-<!-- TODO
-
-Run Dockerfile2 -->
-=======
->>>>>>> d4e767def14af21e368e392bc04eb7c89e1a92e3
+4. Check it out https://www.logic2020.com/insight/tactical/wsl-docker-gpu-enabled-nvidia
+Try Run the nvidia/cudagl and then install webots inside locally
+Or use the previous docker and change the paths?
+-->

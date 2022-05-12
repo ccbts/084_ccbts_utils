@@ -5,7 +5,7 @@ services:
   webots_simulation:
     build:
       context: .
-      dockerfile: Dockerfile.ROS2WebotsNvidia
+      dockerfile: Dockerfile.ROS2Webots
       network: host
     # command: bash -c ". /entrypoint.sh create2_description spawn_robot.launch.py"
     container_name: webots_simulation
@@ -27,7 +27,7 @@ services:
     privileged: true
     stdin_open: true # docker run -i
     tty: true        # docker run -t
-    user: cocobots
+    user: root
     volumes:
       - /home/$USER/cocobots_ws/src:/cocobots_ws/src:rw
       - /tmp/.X11-unix:/tmp/.X11-unix:rw

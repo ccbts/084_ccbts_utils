@@ -6,11 +6,13 @@ source $HOME/.bashrc
 cd  
 exec bash -i -c $@
 
-# Adding all the necessary ros sourcing
-echo "" >> ~/.bashrc
-echo "## ROS" >> ~/.bashrc
-echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
-echo "source /home/$USER/cocobots_ws/install/setup.bash" >> ~/.bashrc
+# # Adding all the necessary ros sourcing
+# echo "" >> ~/.bashrc
+# echo "## ROS" >> ~/.bashrc
+# echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
+# echo "source /home/$USER/cocobots_ws/install/setup.bash" >> ~/.bashrc
+
+# source $HOME/.bashrc 
 
 
 # ----------------------- Next entrypoint ---------------

@@ -4,7 +4,7 @@
 
 # Install some dependencies
 sudo apt-get update;
-sudo apt-get install -qq curl dirmngr git software-properties-common;
+sudo apt-get install -qq curl dirmngr git software-properties-common sudo;
 # sudo apt-get install python3-rocker
 
 # Install other dependencies too
@@ -15,7 +15,6 @@ curl https://get.docker.com | sh \
 ## docker-compose
 sudo curl -L "https://github.com/docker/compose/releases/download/1.28.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
-echo "Dependencies were installed"
 
 # Install nvidia-container-toolkit
 distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
@@ -27,3 +26,5 @@ distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
 sudo apt-get update
 sudo apt-get install -y nvidia-docker2
 sudo systemctl restart docker
+
+echo "Dependencies were installed"

@@ -1,40 +1,18 @@
-ARG BASE_IMAGE=nvidia/cudagl:11.4.2-devel-ubuntu20.04
-FROM ${BASE_IMAGE}
+# --------------------------- #
+## Webots 
+# --------------------------- #
+FROM cyberbotics/webots:latest
 
 LABEL maintainer="Alexandros Nikolaou"
 
-# Disable dpkg/gdebi interactive dialogs
-ENV DEBIAN_FRONTEND=noninteractive
+# --------------------------- #
+## Cocobots
+# --------------------------- #
 
-# Determine Webots version to be used and set default argument
-ARG WEBOTS_VERSION=R2022a
-ARG WEBOTS_PACKAGE_PREFIX=
+# ENV USER=cocobots
+# ENV NVIDIA_DRIVER_CAPABILITIES ${NVIDIA_DRIVER_CAPABILITIES},display
 
-# Fix NVIDIA CUDA Linux repository key rotation
-RUN apt-key del 7fa2af80
-RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu$(cat /etc/os-release | grep VERSION_ID | awk '{print substr($0,13,5)}' | awk -F'.' '{print $1$2}')/x86_64/3bf863cc.pub
-
-# Install Webots runtime dependencies
-RUN apt update && apt install --yes wget && rm -rf /var/lib/apt/lists/
-RUN wget https://raw.githubusercontent.com/cyberbotics/webots/master/scripts/install/linux_runtime_dependencies.sh
-RUN chmod +x linux_runtime_dependencies.sh && ./linux_runtime_dependencies.sh && rm ./linux_runtime_dependencies.sh && rm -rf /var/lib/apt/lists/
-
-# Install X virtual framebuffer to be able to use Webots without GPU and GUI (e.g. CI)
-RUN apt update && apt install --yes xvfb && rm -rf /var/lib/apt/lists/
-
-# Install Webots
-WORKDIR /usr/local
-RUN wget https://github.com/cyberbotics/webots/releases/download/$WEBOTS_VERSION/webots-$WEBOTS_VERSION-x86-64$WEBOTS_PACKAGE_PREFIX.tar.bz2
-RUN tar xjf webots-*.tar.bz2 && rm webots-*.tar.bz2
-ENV QTWEBENGINE_DISABLE_SANDBOX=1
-ENV WEBOTS_HOME /usr/local/webots
-ENV PATH /usr/local/webots:${PATH}
-
-# Finally open a bash command to let the user interact
-CMD ["/bin/bash"]
-
-ENV USER=cocobots
-ENV NVIDIA_DRIVER_CAPABILITIES ${NVIDIA_DRIVER_CAPABILITIES},display
+# RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homeapt-get/install/HEAD/install.sh)"
 
 # install packages
 RUN apt-get update && apt-get -q -y install --no-install-recommends \
@@ -55,23 +33,23 @@ RUN apt-get update && apt-get -q -y install --no-install-recommends \
 # timezone
 
 # Create a user with passwordless sudo
-USER root
-RUN adduser --gecos "Development User" --disabled-password -u 1000 $USER
-RUN adduser $USER sudo
-RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+# USER r sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Change HOME environment variable
+ENV USER root
 ENV HOME /home/${USER} 
 
 # https://cyberbotics.com/doc/guide/running-extern-robot-controllers#running-extern-robot-controllers
-ENV PYTHONPATH=${PYTHONPATH}:${WEBOTS_HOME}/lib/controller/python3
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${WEBOTS_HOME}/lib/controller
+ENV PYTHONPATH=${PYTHONPATH}:${WEBOTS_HOME}/lib/controller/python38
+ENV LD_LIBRARY_PATH=/usr/local/webots/lib/controller:${LD_LIBRARY_PATH}
 
 # Audio support
 RUN usermod -aG audio $USER
 RUN apt-get update && apt-get install -y alsa-utils
 
-# ROS 2 Foxy
+# --------------------------- #
+## ROS 2 Foxy
+# --------------------------- #
 
 # setup keys
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
@@ -84,7 +62,7 @@ ENV ROS_DISTRO foxy
 
 # install ros2 packages
 RUN apt-get update && apt-get install -y \
-    ros-foxy-ros-base \
+    ros-foxy-desktop \
     ros-foxy-webots-ros2 \
     ros-foxy-webots-ros2-driver \
     ~nros-foxy-rqt*
@@ -142,6 +120,10 @@ RUN apt-get update \
   libxext6 \
   libx11-6
 
+# install rocker
+RUN apt-get update && apt-get install -y \
+    python3-rocker
+
 # Env vars for the nvidia-container-runtime.
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES graphics,utility,compute
@@ -169,17 +151,17 @@ COPY --chown=$USER:$USER Webots-R2022a.conf /home/$USER/.config/Cyberbotics/Webo
 RUN apt-get update
 RUN rosdep init; rosdep update
 
-USER $USER
+# USER $USER
 
-# setup ros2 environment
-RUN echo ". /opt/ros/foxy/setup.bash" >> /home/$USER/.bashrc
-ENV COLCON_SETUP_BASH "/cocobots_ws/install/local_setup.bash"
-RUN echo "[[ -f ${COLCON_SETUP_BASH} ]] && . ${COLCON_SETUP_BASH}" >> /home/$USER/.bashrc
-
-# Not sure for this. To initialize the workspace:
+# Initialize the workspace:
 WORKDIR ${HOME}/cocobots_ws
-RUN /bin/bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash; colcon build --symlink-install"
+RUN /bin/bash -c "colcon build --symlink-install"
 
-COPY ./entrypoint.sh /home/cocobots/cocobots_ws/docker/entrypoint.sh
+# Source ros2 environment (update bashrc)
+RUN echo "source /opt/ros/foxy/setup.bash" >> /home/$USER/.bashrc
+RUN echo "source /home/root/cocobots_ws/install/setup.bash" >> /home/$USER/.bashrc
+
+COPY ./entrypoint.sh /home/${USER}/cocobots_ws/docker/entrypoint.sh
+RUN sudo chmod +x /home/${USER}/cocobots_ws/docker/entrypoint.sh
 ENTRYPOINT ["/home/cocobots/cocobots_ws/docker/entrypoint.sh"]
 CMD ["bash"]
