@@ -1,4 +1,4 @@
-# Cocobots Repository
+# Cocobots Utilities Repository
 
 This repository consists of dockerfiles to installation instructions for ROS2 and Webots. 
 
