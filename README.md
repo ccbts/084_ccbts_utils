@@ -72,22 +72,32 @@ git clone https://github.com/ccbts/084_ccbts_utils.git
   ```
 * Otherwise:
   ```
+  chmod +x ./084_ccbts_utils/webots_ros2/setup_project_ubuntu_nogpu.sh
   sudo bash ./084_ccbts_utils/webots_ros2/setup_project_ubuntu_nogpu.sh
   ```
-4. Build the docker:
+4. Build the docker (May need "sudo"):
+* With GPU:
   ```
   docker-compose -f 084_ccbts_utils/webots_ros2/compose-ubuntu.yaml build
   ```
-5. Run the docker (May need "sudo"):
+* Without GPU:
+  ```
+  docker-compose -f 084_ccbts_utils/webots_ros2/compose-ubuntu-nogpu.yaml build
+  ```
+5. To display a GUI-based application in Docker you have to enable X server by giving permission to xhost:
+```
+xhost +local:*
+```
+6. Run the docker (May need "sudo"):
 * If there is GPU on the system:
   ```
   docker run --gpus=all -it -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw ros2_webots
   ```
 * Otherwise:
   ```
-  rocker --devices /dev/dri/card --x11 ros2_webots
+  docker run --rm -it --user=root -e DISPLAY -e TERM   -e QT_X11_NO_MITSHM=1  -v /tmp/.X11-unix:/tmp/.X11-unix   -v /etc/localtime:/etc/localtime:ro  ros2_webots
   ```
-6. By now, you already set up and can interact with ROS2 and Webots in docker. If you also want to clone the cocobots repositories, then follow the rest of the instructions inside the container. Remember to source everytime you open a new terminal:
+7. By now, you already set up and can interact with ROS2 and Webots in docker. If you also want to clone the cocobots repositories, then follow the rest of the instructions inside the container. Remember to source everytime you open a new terminal:
 ```
 cd cocobots_ws/src/;
 git clone git@github.com:ccbts/085_ccbts_env.git;
@@ -96,7 +106,7 @@ colcon build;
 source install/local_setup.bash;
 export PYTHONPATH=${PYTHONPATH}:/home/${USER}/cocobots_ws/install/ccbts_environment/lib/python3.8/site-packages
 ```
-7. To launch the Cocobots world:
+8. To launch the Cocobots world:
 ```
 ros2 launch ccbts_environment cocobots_launch.py
 ```

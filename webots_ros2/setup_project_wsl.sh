@@ -114,11 +114,19 @@ rosdep init
 rosdep update
 
 # Webots env variables
+echo "export WEBOTS_HOME=/usr/local/webots" >> /home/$USER/.bashrc
+echo "export PATH=/usr/local/webots:${PATH}" >> /home/$USER/.bashrc
+echo "PYTHONPATH=${PYTHONPATH}:${WEBOTS_HOME}/lib/controller/python38" >> /home/$USER/.bashrc
+echo "LD_LIBRARY_PATH=/opt/ros/foxy/lib:/usr/local/webots/lib/controller:${LD_LIBRARY_PATH}" >> /home/$USER/.bashrc
+echo "export WEBOTS_HOME=/usr/local/webots" >> /home/$USER/.bashrc
+
 export WEBOTS_HOME=/usr/local/webots
 export PATH=/usr/local/webots:${PATH}
 export PYTHONPATH=${PYTHONPATH}:${WEBOTS_HOME}/lib/controller/python38
 export LD_LIBRARY_PATH=/opt/ros/foxy/lib:/usr/local/webots/lib/controller:${LD_LIBRARY_PATH}
 export QTWEBENGINE_DISABLE_SANDBOX=1
 export QT_X11_NO_MITSHM=1
+export LIBGL_ALWAYS_INDIRECT=1
+
 
 echo "Dependencies were installed"
