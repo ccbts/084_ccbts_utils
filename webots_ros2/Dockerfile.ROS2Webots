@@ -4,7 +4,7 @@
 ARG BASE_IMAGE=nvidia/cudagl:11.4.2-devel-ubuntu20.04
 FROM ${BASE_IMAGE}
 
-LABEL maintainer="Alexandros Nikolaou"
+LABEL maintainer="alexnic31@gmail.com"
 
 # Disable dpkg/gdebi interactive dialogs
 ENV DEBIAN_FRONTEND=noninteractive

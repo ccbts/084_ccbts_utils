@@ -3,7 +3,7 @@
 # --------------------------- #
 FROM cyberbotics/webots:latest
 
-LABEL maintainer="Alexandros Nikolaou"
+LABEL maintainer="alexnic31@gmail.com"
 
 # --------------------------- #
 ## Cocobots

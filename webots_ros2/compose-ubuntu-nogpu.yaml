@@ -8,8 +8,8 @@ services:
       dockerfile: Dockerfile.ROS2WebotsNoGPU
       network: host
     # command: bash -c ". /entrypoint.sh create2_description spawn_robot.launch.py"
-    container_name: webots_simulation
-    image: ros2_webots
+    container_name: webots_simulation2
+    image: ros2_webots2
     deploy:
       resources:
         reservations:
