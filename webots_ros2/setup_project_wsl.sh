@@ -3,8 +3,8 @@
 # Usage: ./setup_project.sh (it requires sudo!)
 
 # Install some dependencies
-sudo apt-get update;
-sudo apt-get install -qq curl dirmngr git software-properties-common sudo wget;
+sudo apt-get update
+sudo apt-get install -qq curl dirmngr git software-properties-common sudo wget
 # sudo apt-get install python3-rocker
 
 # Install other dependencies too
@@ -42,19 +42,20 @@ export LANG=en_US.UTF-8
 locale  # verify settings
 
 # # Setup Sources
-sudo apt update && sudo apt install curl gnupg2 lsb-release
+sudo apt update 
+sudo apt install gnupg2 lsb-release
 sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key  -o /usr/share/keyrings/ros-archive-keyring.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
 
 # # Install ROS2 Foxy
-sudo apt-get update && apt-get install -y \
-    ros-foxy-desktop \
-    ~nros-foxy-rqt*
+sudo apt-get update 
+sudo apt-get install -y ros-foxy-desktop ~nros-foxy-rqt*
 source /opt/ros/foxy/setup.bash
 echo ". /opt/ros/foxy/setup.bash" >> /home/$USER/.bashrc
 
 # install bootstrap tools
-sudo apt-get update && apt-get install -y \
+sudo apt-get update 
+sudo apt-get install -y 
     build-essential \
     git \
     python3-colcon-common-extensions \
@@ -69,7 +70,7 @@ export AMENT_PREFIX_PATH=/opt/ros/foxy
 export COLCON_PREFIX_PATH=/opt/ros/foxy
 # export LD_LIBRARY_PATH=/opt/ros/foxy/lib
 export PATH=/opt/ros/foxy/bin:$PATH
-export PYTHONPATH=/opt/ros/foxy/lib/python3.8/site-packages
+export PYTHONPATH=${PYTHONPATH}:/opt/ros/foxy/lib/python3.8/site-packages
 export ROS_PYTHON_VERSION=3
 export ROS_VERSION=2
 export LD_LIBRARY_PATH=/opt/ros/foxy/lib:${LD_LIBRARY_PATH}
@@ -77,7 +78,8 @@ export NVIDIA_VISIBLE_DEVICES=all
 export NVIDIA_DRIVER_CAPABILITIES=graphics,utility,compute
 
 # Dependencies for glvnd and X11.
-sudo apt-get update && apt-get install -y \
+sudo apt-get update 
+sudo apt-get install -y \
   libglvnd0 \
   libgl1 \
   libglx0 \
@@ -87,7 +89,8 @@ sudo apt-get update && apt-get install -y \
   libxtst6
 
 # install rocker
-sudo apt-get update && apt-get install -y \
+sudo apt-get update 
+sudo apt-get install -y \
     python3-rocker
 
 ###########################
@@ -100,13 +103,15 @@ sudo apt-get update
 sudo apt-get install webots
 
 # Install ROS related webots dependencies
-sudo apt-get update && apt-get install -y \
+sudo apt-get update 
+sudo apt-get install -y \
     ros-foxy-webots-ros2 \
     ros-foxy-webots-ros2-driver \
 
 # rosdep
 sudo apt-get update
-rosdep init; rosdep update
+rosdep init 
+rosdep update
 
 # Webots env variables
 export WEBOTS_HOME=/usr/local/webots

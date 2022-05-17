@@ -26,6 +26,7 @@ RUN apt-get update && apt-get -q -y install --no-install-recommends \
     unzip \
     git \
     apt-utils \
+    curl \
     software-properties-common \
     && rm -rf /var/lib/apt/lists/*
 
@@ -103,7 +104,7 @@ ENV AMENT_PREFIX_PATH=/opt/ros/foxy
 ENV COLCON_PREFIX_PATH=/opt/ros/foxy
 # ENV LD_LIBRARY_PATH=/opt/ros/foxy/lib
 ENV PATH=/opt/ros/foxy/bin:$PATH
-ENV PYTHONPATH=/opt/ros/foxy/lib/python3.8/site-packages
+ENV PYTHONPATH=${PYTHONPATH}:/opt/ros/foxy/lib/python3.8/site-packages
 ENV ROS_PYTHON_VERSION=3
 ENV ROS_VERSION=2
 
@@ -163,5 +164,5 @@ RUN echo "source /home/root/cocobots_ws/install/setup.bash" >> /home/$USER/.bash
 
 COPY ./entrypoint.sh /home/${USER}/cocobots_ws/docker/entrypoint.sh
 RUN sudo chmod +x /home/${USER}/cocobots_ws/docker/entrypoint.sh
-ENTRYPOINT ["/home/cocobots/cocobots_ws/docker/entrypoint.sh"]
+ENTRYPOINT ["/home/root/cocobots_ws/docker/entrypoint.sh"]
 CMD ["bash"]

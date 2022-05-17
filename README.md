@@ -1,6 +1,6 @@
 # Cocobots Utilities Repository
 
-This repository consists of dockerfiles to installation instructions for ROS2 and Webots. 
+This repository consists of dockerfiles and installation guidelines for ROS2 and Webots. 
 
 ## System requirements
 
@@ -54,28 +54,29 @@ These tools will be installed in step 3. Ignore it if they are already installed
 
 ### Installation
 
-1. Open a terminal, navigate in the 'home' directory, and create a folder "cocobots_ws". This will be your workspace directory
+1. Open a terminal, navigate in the 'home' directory, and create a folder to store the dockerfile, eg "cocobots". 
 ```
-mkdir -p cocobots_ws
-chown -R $USER:$USER home/$USER/cocobots_ws
-cd cocobots_ws
+mkdir -p cocobots
+chown -R $USER:$USER /home/$USER/cocobots
+cd cocobots
 ```
-2. Git clone the [cocobots repository](https://github.com/ccbts/084_ccbts-utils) in the root of your workspace folder (cocobots_ws):
+2. Git clone the [cocobots repository](https://github.com/ccbts/084_ccbts_utils) in the root of your workspace folder (cocobots):
 ```
-git clone https://github.com/ccbts/084_ccbts-utils.git
+git clone https://github.com/ccbts/084_ccbts_utils.git
 ```
 3. Install the dependencies
 * If there is GPU on the system:
   ```
-  sudo ./084_cocobots_docker/webots_ros2/setup_project_ubuntu_gpu.sh
+  chmod +x ./084_ccbts_utils/webots_ros2/setup_project_ubuntu_gpu.sh;
+  sudo bash ./084_ccbts_utils/webots_ros2/setup_project_ubuntu_gpu.sh
   ```
 * Otherwise:
   ```
-  sudo ./084_cocobots_docker/webots_ros2/setup_project_ubuntu_nogpu.sh
+  sudo bash ./084_ccbts_utils/webots_ros2/setup_project_ubuntu_nogpu.sh
   ```
 4. Build the docker:
   ```
-  docker-compose -f 084_cocobots_docker/webots_ros2/compose-ubuntu.yaml build
+  docker-compose -f 084_ccbts_utils/webots_ros2/compose-ubuntu.yaml build
   ```
 5. Run the docker (May need "sudo"):
 * If there is GPU on the system:
@@ -86,17 +87,18 @@ git clone https://github.com/ccbts/084_ccbts-utils.git
   ```
   rocker --devices /dev/dri/card --x11 ros2_webots
   ```
-6. By now, you already set up and can interact with ROS2 and Webots in docker. If you also want to clone the cocobots repositories, then follow the rest instructions:
+6. By now, you already set up and can interact with ROS2 and Webots in docker. If you also want to clone the cocobots repositories, then follow the rest of the instructions inside the container. Remember to source everytime you open a new terminal:
 ```
-cd cocobots_ws/src/
-git clone https://alexandrosnic@bitbucket.org/dsgbielefeld/085_cocobots_environment.git
-cd ..
-colcon build
-source install/local_setup.bash
+cd cocobots_ws/src/;
+git clone git@github.com:ccbts/085_ccbts_env.git;
+cd ..;
+colcon build;
+source install/local_setup.bash;
+export PYTHONPATH=${PYTHONPATH}:/home/${USER}/cocobots_ws/install/ccbts_environment/lib/python3.8/site-packages
 ```
 7. To launch the Cocobots world:
 ```
-ros2 launch cocobots_simu cocobots_launch.py
+ros2 launch ccbts_environment cocobots_launch.py
 ```
 
 
@@ -120,7 +122,7 @@ The nvidia-docker2 for WSL currently does not support OpenGL applications like W
 
 * [ROS2 Foxy](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html)
 * [Webots](https://cyberbotics.com/doc/guide/installation-procedure#installing-the-debian-package-with-the-advanced-packaging-tool-apt)
-* Xserver running, eg [VcXsrvs](https://sourceforge.net/projects/vcxsrv/). To configure it, follow this [tutorial](https://techcommunity.microsoft.com/t5/windows-dev-appconsult/running-wsl-gui-apps-on-windows-10/ba-p/1493242)
+* Xserver running, eg [VcXsrvs](https://sourceforge.net/projects/vcxsrv/). To configure it, follow this [tutorial](https://techcommunity.microsoft.com/t5/windows-dev-appconsult/running-wsl-gui-apps-on-windows-10/ba-p/1493242). 
 
 
 ### Installation
@@ -129,18 +131,19 @@ The nvidia-docker2 for WSL currently does not support OpenGL applications like W
 
 ```
 mkdir -p cocobots_ws/src
-chown -R $USER:$USER home/$USER/cocobots_ws
-cd cocobots_ws
+chown -R $USER:$USER /home/$USER/cocobots_ws
+cd cocobots_ws 
 ```
-2. Git clone the [cocobots repository](https://github.com/ccbts/084_ccbts-utils) in the root of your workspace folder (cocobots_ws):
+2. Git clone the [cocobots repository](https://github.com/ccbts/084_ccbts_utils) in the root of your workspace folder (cocobots_ws):
 ```
-git clone https://github.com/ccbts/084_ccbts-utils.git
+git clone https://github.com/ccbts/084_ccbts_utils.git
 ```
 3. Install the dependencies
 ```
-sudo ./084_cocobots_docker/webots_ros2/setup_project_wsl.sh
+chmod +x ./084_ccbts_utils/webots_ros2/setup_project_wsl.sh;
+sudo bash ./084_ccbts_utils/webots_ros2/setup_project_wsl.sh
 ```
-4. Create the workspace
+4. Create the workspace in the cocobots_ws directory
 ```
 colcon build
 ```
@@ -148,21 +151,26 @@ colcon build
 ```
 source install/setup.bash
 ```
-6. By now, you already set up and can interact with ROS2 and Webots. If you also want to clone the cocobots repositories, then follow the rest instructions:
+6. By now, you already set up and can interact with ROS2 and Webots. If you also want to clone the cocobots repositories, then follow the rest of the instructions. Remember to source everytime you open a new terminal:
 ```
-cd src/
-git clone https://alexandrosnic@bitbucket.org/dsgbielefeld/085_cocobots_environment.git
-cd ..
-colcon build
-source install/local_setup.bash
+cd src/;
+git clone git@github.com:ccbts/085_ccbts_env.git;
+cd ..;
+colcon build;
+source install/local_setup.bash;
+export PYTHONPATH=${PYTHONPATH}:/home/${USER}/cocobots_ws/install/ccbts_environment/lib/python3.8/site-packages
 ```
 7. Configure the Xserver following this [tutorial](https://techcommunity.microsoft.com/t5/windows-dev-appconsult/running-wsl-gui-apps-on-windows-10/ba-p/1493242) (First option: VcXsrv Windows X Server). To avoid having to export the DISPLAY every time that WSL is launched, you can include the command at the end of the /etc/bash.bashrc file:
 ```
-echo export DISPLAY="`grep nameserver /etc/resolv.conf | sed 's/nameserver //'`:0" >> /home/$USER/.bashrc
+echo "export DISPLAY="`grep nameserver /etc/resolv.conf | sed 's/nameserver //'`:0" >> /home/$USER/.bashrc
+```
+If webots still don't open even after the installation, then run 
+```
+echo "export DISPLAY=$(grep nameserver /etc/resolv.conf | awk '{print $2}'):0.0" >> /home/$USER/.bashrc
 ```
 8. To launch the Cocobots world:
 ```
-ros2 launch cocobots_simu cocobots_launch.py
+ros2 launch ccbts_environment cocobots_launch.py
 ```
 
 
@@ -190,41 +198,62 @@ A ROS2 Foxy (docker) setup with all the required dependencies for this project (
 
 ```
 mkdir -p cocobots_ws
-chown -R $USER:$USER home/$USER/cocobots_ws
+chown -R $USER:$USER /home/$USER/cocobots_ws
 cd cocobots_ws
 ```
-2. Git clone the [cocobots repository](https://github.com/ccbts/084_ccbts-utils) in the root of your workspace folder (cocobots_ws):
+2. Git clone the [cocobots repository](https://github.com/ccbts/084_ccbts_utils) in the root of your workspace folder (cocobots_ws):
 ```
-git clone https://github.com/ccbts/084_ccbts-utils.git
+git clone https://github.com/ccbts/084_ccbts_utils.git
 ```
 3. Install the dependencies
 ```
-sudo ./084_cocobots_docker/webots_ros2/setup_project_mac.sh
+chmod +x ./084_ccbts_utils/webots_ros2/setup_project_mac.sh;
+/bin/bash ./084_ccbts_utils/webots_ros2/setup_project_mac.sh
 ```
 4. Build the docker:
   ```
-  docker-compose -f 084_cocobots_docker/webots_ros2/compose-mac.yaml build
+  docker-compose -f 084_ccbts_utils/webots_ros2/compose-mac.yaml build
   ```
 5. Run the docker (May need "sudo"):
   ```
   rocker --devices /dev/dri/card --x11 ros2_webots
   ```
-6. By now, you already set up and can interact with ROS2 and Webots in docker. If you also want to clone the cocobots repositories, then follow the rest instructions:
+6. By now, you already set up and can interact with ROS2 and Webots in docker. If you also want to clone the cocobots repositories, then follow the rest of the instructions. Remember to source everytime you open a new terminal:
 ```
-cd cocobots_ws/src/
-git clone https://alexandrosnic@bitbucket.org/dsgbielefeld/085_cocobots_environment.git
-cd ..
-colcon build
-source install/local_setup.bash
+cd cocobots_ws/src/;
+git clone git@github.com:ccbts/085_ccbts_env.git;
+cd ..;
+colcon build;
+source install/local_setup.bash;
+export PYTHONPATH=${PYTHONPATH}:/home/${USER}/cocobots_ws/install/ccbts_environment/lib/python3.8/site-packages
 ```
 7. To launch the Cocobots world:
 ```
-ros2 launch cocobots_simu cocobots_launch.py
+ros2 launch ccbts_environment cocobots_launch.py
 ```
 
 <!-- </details> -->
 
 
+## Troubleshooting
+1. Error: package not found
+  * Make sure to run 'source install/setup.bash'
+2. Webots is not opening
+  * Make sure DISPLAY had been set correctly by "echo $DISPLAY", and that you have an X server running
+3. Could not load the Qt platform plugin “xcb” … even though it was found
+  * Xserver error. Make sure you ran all the steps of the tutorial ([Windows](https://techcommunity.microsoft.com/t5/windows-dev-appconsult/running-wsl-gui-apps-on-windows-10/ba-p/1493242), [Mac](https://affolter.net/running-a-docker-container-with-gui-on-mac-os/)) for setting the Xserver, and that the DISPLAY variable has been set correctly
+  * If running on MAC, try this before going through the tutorial
+  ```
+  socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\"
+  ```
+  * If running on WSL, try exporting this display:
+  ```
+  export DISPLAY=$(grep nameserver /etc/resolv.conf | awk '{print $2}'):0.0
+  ```
+  or this:
+  ```
+  export DISPLAY=$(route.exe print | grep 0.0.0.0 | head -1 | awk '{print $4}'):0.0
+  ```
 
 
 
