@@ -8,9 +8,9 @@ It is highly recommended to run Webots on a supported [GPU](https://www.cyberbot
 For this, make sure you have, or update to the latest GPU drives from [here](https://www.nvidia.com/download/index.aspx).
 
 The following operating systems are supported:
-* Linux (preferred)
+* Linux (preferred) 
 * Windows through Windows Subsystem for Linux (WSL). To install WSL, follow these [guidelines](https://docs.microsoft.com/en-us/windows/wsl/install). A current limitation is that [nvidia-docker2](https://docs.nvidia.com/cuda/wsl-user-guide/index.html#known-limitations-for-linux-cuda-apps) for WSL is still under development and for that reason ROS2 and Webots can only be installed through docker without GPU support. For a GPU system a bash script will be provided instead of docker. 
-* Mac (currently doesn't work properly)
+* Mac (currently doesn't work properly due to limited support of OpenGL)
 
 <!-- ## Dependencies
 * For WSL, install [Docker](https://docs.docker.com/get-docker/) 
@@ -106,9 +106,45 @@ colcon build;
 source install/local_setup.bash;
 export PYTHONPATH=${PYTHONPATH}:/home/${USER}/cocobots_ws/install/ccbts_environment/lib/python3.8/site-packages
 ```
-8. To launch the Cocobots world:
+<!-- 8. To launch the Cocobots world:
 ```
 ros2 launch ccbts_environment cocobots_launch.py
+``` -->
+8. To manipulate the Universal Robot arm, install the UR driver. In the cocobots_ws directory run:
+```
+git clone -b foxy https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git src/Universal_Robots_ROS2_Driver
+vcs import src --skip-existing --input src/Universal_Robots_ROS2_Driver/Universal_Robots_ROS2_Driver.repos
+rosdep install --ignore-src --from-paths src -y -r
+colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
+source install/setup.bash
+```
+9. Install the moveit package and dependencies. In the cocobots_ws directory run:
+```
+vcs import src --skip-existing --input src/Universal_Robots_ROS2_Driver/MoveIt_Support.repos
+vcs import src --skip-existing --input src/moveit2/moveit2.repos
+rosdep install --ignore-src --from-paths src -y -r
+colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
+source install/setup.bash
+``` 
+10. Create the connection between the PC and the robot. Connect the PC with the ethernet cable of the UR. Then open Network Settings and create a new Wired (Ethernet) connection with these settings. You may want to name this new connection UR or something similar:
+```
+IPv4
+Manual
+Address: 192.168.1.101
+Netmask: 255.255.255.0
+Gateway: 192.168.1.1
+```
+11. Run the launch file that starts the robot driver and the controllers:
+```
+ros2 launch ur_bringup ur_control.launch.py ur_type:=ur3e robot_ip:=192.168.1.102 launch_rviz:=true
+```
+12. Send some goal to the Joint Trajectory Controller by using a demo node from ros2_control_demos package by starting the following command in another terminal:
+```
+ros2 launch ur_bringup test_joint_trajectory_controller.launch.py
+```
+13. To test the driver with the example MoveIt-setup, first start the controllers with the command at [11] then start MoveIt.
+```
+ros2 launch ur_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:=192.168.1.102 launch_rviz:=true
 ```
 
 
@@ -128,40 +164,46 @@ The setup may work with or without GPU (follow the corresponding guidelines).
 <!-- * [docker](https://docs.docker.com/engine/install/ubuntu/) (and make sure is running)
 * [docker-compose](https://docs.docker.com/compose/install/)
 * For WSL: [docker-nvidia2](https://docs.nvidia.com/cuda/wsl-user-guide/index.html) -->
-The nvidia-docker2 for WSL currently does not support OpenGL applications like Webots, thus, it cannot be installed through a docker. For that reason, that bash script of step 3 will be used instead, or ignore that step if already these tools are installed:
+The nvidia-docker2 for WSL currently does not support OpenGL applications like Webots, thus, it cannot be installed through a docker. For that reason, a bash script (step 3) will be used instead, or ignore that step if already these tools are installed:
 
 * [ROS2 Foxy](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html)
-* [Webots](https://cyberbotics.com/doc/guide/installation-procedure#installing-the-debian-package-with-the-advanced-packaging-tool-apt)
+* [Webots](https://cyberbotics.com/doc/guide/installation-procedure#installation-on-windows). Webots cannot run as GPU accelerated in WSL, so it is recommended to install Webots natively in Windows, following the official installation instructions, and then create a symlink (shortcut) to the executable file, as is described in step 5.
 * Xserver running, eg [VcXsrvs](https://sourceforge.net/projects/vcxsrv/). To configure it, follow this [tutorial](https://techcommunity.microsoft.com/t5/windows-dev-appconsult/running-wsl-gui-apps-on-windows-10/ba-p/1493242). 
+* WSL2 with Ubuntu 20.04 installed
 
 
 ### Installation
 
-1. Open a terminal, navigate in the 'home' directory, and create a folder "cocobots_ws". This will be your workspace directory
+1. After you install Webots from the [official site](https://cyberbotics.com/doc/guide/installation-procedure#installation-on-windows) open a WSL terminal and create a symlink (shortcut) of the Webots executable in a WSL directory, here will be /usr/local/bin/webots:
+```
+sudo ln -s /mnt/c/Program\ Files/Webots/msys64/mingw64/bin/webotsw.exe /usr/local/bin/webots
+```
+If Webots is installed in another directory other than Program Files, then change accordingly the above command. Also, you can create the symlink in another directory, but then make sure to include that directory in the PATH variable.
+2. Navigate in the 'home' directory, and create a folder "cocobots_ws". This will be your workspace directory
 
 ```
 mkdir -p cocobots_ws/src
 chown -R $USER:$USER /home/$USER/cocobots_ws
 cd cocobots_ws 
 ```
-2. Git clone the [cocobots repository](https://github.com/ccbts/084_ccbts_utils) in the root of your workspace folder (cocobots_ws):
+3. Git clone the [cocobots repository](https://github.com/ccbts/084_ccbts_utils) in the root of your workspace folder (cocobots_ws):
 ```
 git clone https://github.com/ccbts/084_ccbts_utils.git
 ```
-3. Install the dependencies
+4. Install the dependencies
 ```
 chmod +x ./084_ccbts_utils/webots_ros2/setup_project_wsl.sh;
 sudo bash ./084_ccbts_utils/webots_ros2/setup_project_wsl.sh
 ```
-4. Create the workspace in the cocobots_ws directory
+5. Create the workspace in the cocobots_ws directory
 ```
 colcon build
 ```
-5. Source the workspace (and do it every time you open a new terminal):
+6. Source the workspace (and do it every time you open a new terminal):
 ```
 source install/setup.bash
 ```
-6. By now, you already set up and can interact with ROS2 and Webots. If you also want to clone the cocobots repositories, then follow the rest of the instructions. Remember to source everytime you open a new terminal:
+7. By now, you already set up and can interact with ROS2 and Webots. If you also want to clone the cocobots repositories, then follow the rest of the instructions. Remember to source everytime you open a new terminal:
 ```
 cd src/;
 git clone git@github.com:ccbts/085_ccbts_env.git;
@@ -170,7 +212,7 @@ colcon build;
 source install/local_setup.bash;
 export PYTHONPATH=${PYTHONPATH}:/home/${USER}/cocobots_ws/install/ccbts_environment/lib/python3.8/site-packages
 ```
-7. Configure the Xserver following this [tutorial](https://techcommunity.microsoft.com/t5/windows-dev-appconsult/running-wsl-gui-apps-on-windows-10/ba-p/1493242) (First option: VcXsrv Windows X Server). To avoid having to export the DISPLAY every time that WSL is launched, you can include the command at the end of the /etc/bash.bashrc file:
+8. Configure the Xserver following this [tutorial](https://techcommunity.microsoft.com/t5/windows-dev-appconsult/running-wsl-gui-apps-on-windows-10/ba-p/1493242) (First option: VcXsrv Windows X Server). To avoid having to export the DISPLAY every time that WSL is launched, you can include the command at the end of the /etc/bash.bashrc file:
 ```
 echo "export DISPLAY="`grep nameserver /etc/resolv.conf | sed 's/nameserver //'`:0" >> /home/$USER/.bashrc
 ```
@@ -178,9 +220,45 @@ If webots still don't open even after the installation, then run
 ```
 echo "export DISPLAY=$(grep nameserver /etc/resolv.conf | awk '{print $2}'):0.0" >> /home/$USER/.bashrc
 ```
-8. To launch the Cocobots world:
+<!-- 9. To launch the Cocobots world:
 ```
 ros2 launch ccbts_environment cocobots_launch.py
+``` -->
+9. To manipulate the Universal Robot arm, install the UR driver. In the cocobots_ws directory run:
+```
+git clone -b foxy https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git src/Universal_Robots_ROS2_Driver
+vcs import src --skip-existing --input src/Universal_Robots_ROS2_Driver/Universal_Robots_ROS2_Driver.repos
+rosdep install --ignore-src --from-paths src -y -r
+colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
+source install/setup.bash
+```
+10. Install the moveit package and dependencies. In the cocobots_ws directory run:
+```
+vcs import src --skip-existing --input src/Universal_Robots_ROS2_Driver/MoveIt_Support.repos
+vcs import src --skip-existing --input src/moveit2/moveit2.repos
+rosdep install --ignore-src --from-paths src -y -r
+colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
+source install/setup.bash
+``` 
+11. Create the connection between the PC and the robot. Connect the PC with the ethernet cable of the UR. Then open Network Settings and create a new Wired (Ethernet) connection with these settings. You may want to name this new connection UR or something similar:
+```
+IPv4
+Manual
+Address: 192.168.1.101
+Netmask: 255.255.255.0
+Gateway: 192.168.1.1
+```
+12. Run the launch file that starts the robot driver and the controllers:
+```
+ros2 launch ur_bringup ur_control.launch.py ur_type:=ur3e robot_ip:=192.168.1.102 launch_rviz:=true
+```
+13. Send some goal to the Joint Trajectory Controller by using a demo node from ros2_control_demos package by starting the following command in another terminal:
+```
+ros2 launch ur_bringup test_joint_trajectory_controller.launch.py
+```
+14. To test the driver with the example MoveIt-setup, first start the controllers with the command at [11] then start MoveIt.
+```
+ros2 launch ur_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:=192.168.1.102 launch_rviz:=true
 ```
 
 
@@ -237,9 +315,45 @@ colcon build;
 source install/local_setup.bash;
 export PYTHONPATH=${PYTHONPATH}:/home/${USER}/cocobots_ws/install/ccbts_environment/lib/python3.8/site-packages
 ```
-7. To launch the Cocobots world:
+<!-- 7. To launch the Cocobots world:
 ```
 ros2 launch ccbts_environment cocobots_launch.py
+``` -->
+7. To manipulate the Universal Robot arm, install the UR driver. In the cocobots_ws directory run:
+```
+git clone -b foxy https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git src/Universal_Robots_ROS2_Driver
+vcs import src --skip-existing --input src/Universal_Robots_ROS2_Driver/Universal_Robots_ROS2_Driver.repos
+rosdep install --ignore-src --from-paths src -y -r
+colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
+source install/setup.bash
+```
+8. Install the moveit package and dependencies. In the cocobots_ws directory run:
+```
+vcs import src --skip-existing --input src/Universal_Robots_ROS2_Driver/MoveIt_Support.repos
+vcs import src --skip-existing --input src/moveit2/moveit2.repos
+rosdep install --ignore-src --from-paths src -y -r
+colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
+source install/setup.bash
+``` 
+9. Create the connection between the PC and the robot. Connect the PC with the ethernet cable of the UR. Then open Network Settings and create a new Wired (Ethernet) connection with these settings. You may want to name this new connection UR or something similar:
+```
+IPv4
+Manual
+Address: 192.168.1.101
+Netmask: 255.255.255.0
+Gateway: 192.168.1.1
+```
+10. Run the launch file that starts the robot driver and the controllers:
+```
+ros2 launch ur_bringup ur_control.launch.py ur_type:=ur3e robot_ip:=192.168.1.102 launch_rviz:=true
+```
+11. Send some goal to the Joint Trajectory Controller by using a demo node from ros2_control_demos package by starting the following command in another terminal:
+```
+ros2 launch ur_bringup test_joint_trajectory_controller.launch.py
+```
+12. To test the driver with the example MoveIt-setup, first start the controllers with the command at [11] then start MoveIt.
+```
+ros2 launch ur_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:=192.168.1.102 launch_rviz:=true
 ```
 
 <!-- </details> -->
@@ -264,7 +378,15 @@ ros2 launch ccbts_environment cocobots_launch.py
   ```
   export DISPLAY=$(route.exe print | grep 0.0.0.0 | head -1 | awk '{print $4}'):0.0
   ```
-
+4. If the GUI tools don’t work (like rviz):
+* Try using the environmental variable LIBGL_ALWAYS_INDIRECT:
+```
+export LIBGL_ALWAYS_INDIRECT=0
+```
+* ImportError: libQt5Core.so.5: cannot open shared object file: No such file or directory:
+```
+sudo strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5
+```
 
 
 
