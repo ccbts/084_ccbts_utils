@@ -60,6 +60,12 @@ RUN apt-get update && apt-get -q -y install --no-install-recommends \
     software-properties-common \
     && rm -rf /var/lib/apt/lists/*
 
+# install mesa drivers
+RUN add-apt-repository ppa:kisak/kisak-mesa 
+RUN apt update
+RUN upgrade 
+
+
 # Already installed:
 # timezone
 

@@ -106,7 +106,7 @@ sudo apt-get install webots
 sudo apt-get update 
 sudo apt-get install -y \
     ros-foxy-webots-ros2 \
-    ros-foxy-webots-ros2-driver \
+    ros-foxy-webots-ros2-driver 
 
 # rosdep
 sudo apt-get update
