@@ -49,7 +49,7 @@ These tools will be installed in step 3. Ignore it if they are already installed
 
 * [docker](https://docs.docker.com/engine/install/ubuntu/) (and make sure is running)
 * [docker-compose](https://docs.docker.com/compose/install/)
-* [docker-nvidia2](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
+* [docker-nvidia2](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) if on a **GPU-accelerated system**
 * Xserver
   * For Mac: eg [XQuartz](https://www.xquartz.org/). To install and configure it, follow this [tutorial](https://affolter.net/running-a-docker-container-with-gui-on-mac-os/)
   * For Ubuntu:
@@ -133,25 +133,25 @@ rosdep install --ignore-src --from-paths src -y -r
 colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
 source install/setup.bash
 ``` 
-10. Create the connection between the PC and the robot. Connect the PC with the ethernet cable of the UR. Then open Network Settings and create a new Wired (Ethernet) connection with these settings. You may want to name this new connection UR or something similar:
+<!-- 10. Create the connection between the PC and the robot. Connect the PC with the ethernet cable of the UR. Then open Network Settings and create a new Wired (Ethernet) connection with these settings. You may want to name this new connection UR or something similar:
 ```
 IPv4
 Manual
 Address: 192.168.1.101
 Netmask: 255.255.255.0
 Gateway: 192.168.1.1
+``` -->
+10. To connect to the UR robot, you have to be connected to the same network that the UR is connected to, and identify its IP address (alternatively, you can also establish an ethernet connection). Make sure UR is turned on and then run the launch file that starts the robot driver and the controllers:
 ```
-11. Run the launch file that starts the robot driver and the controllers:
+ros2 launch ur_bringup ur_control.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true
 ```
-ros2 launch ur_bringup ur_control.launch.py ur_type:=ur3e robot_ip:=192.168.1.102 launch_rviz:=true
-```
-12. Send some goal to the Joint Trajectory Controller by using a demo node from ros2_control_demos package by starting the following command in another terminal:
+11. Send some goal to the Joint Trajectory Controller by using a demo node from ros2_control_demos package by starting the following command in another terminal:
 ```
 ros2 launch ur_bringup test_joint_trajectory_controller.launch.py
 ```
-13. To test the driver with the example MoveIt-setup, first start the controllers with the command at [11] then start MoveIt.
+12. To test the driver with the example MoveIt-setup, first start the controllers with the command at [11] then start MoveIt.
 ```
-ros2 launch ur_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:=192.168.1.102 launch_rviz:=true
+ros2 launch ur_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true
 ```
 
 
@@ -219,7 +219,7 @@ colcon build;
 source install/local_setup.bash;
 export PYTHONPATH=${PYTHONPATH}:/home/${USER}/cocobots_ws/install/ccbts_environment/lib/python3.8/site-packages
 ```
-8. Configure the Xserver following this [tutorial](https://techcommunity.microsoft.com/t5/windows-dev-appconsult/running-wsl-gui-apps-on-windows-10/ba-p/1493242) (First option: VcXsrv Windows X Server). To avoid having to export the DISPLAY every time that WSL is launched, you can include the command at the end of the /etc/bash.bashrc file:
+8. Configure the Xserver. For VcXsrv (XLaunch), the configuration is Multiple Windows > Start no client > Check everything apart from "Native opengl" > Finish. To avoid having to export the DISPLAY every time that WSL is launched, you can include the command at the end of the /etc/bash.bashrc file:
 ```
 echo "export DISPLAY="`grep nameserver /etc/resolv.conf | sed 's/nameserver //'`:0" >> /home/$USER/.bashrc
 ```
@@ -247,25 +247,25 @@ rosdep install --ignore-src --from-paths src -y -r
 colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
 source install/setup.bash
 ``` 
-12. Create the connection between the PC and the robot. Connect the PC with the ethernet cable of the UR. Then open Network Settings and create a new Wired (Ethernet) connection with these settings. You may want to name this new connection UR or something similar:
+<!-- 12. Create the connection between the PC and the robot. Connect the PC with the ethernet cable of the UR. Then open Network Settings and create a new Wired (Ethernet) connection with these settings. You may want to name this new connection UR or something similar:
 ```
 IPv4
 Manual
 Address: 192.168.1.101
 Netmask: 255.255.255.0
 Gateway: 192.168.1.1
+``` -->
+12. To connect to the UR robot, you have to be connected to the same network that the UR is connected to, and identify its IP address (alternatively, you can also establish an ethernet connection). The run the launch file that starts the robot driver and the controllers:
 ```
-13. Run the launch file that starts the robot driver and the controllers:
+ros2 launch ur_bringup ur_control.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true
 ```
-ros2 launch ur_bringup ur_control.launch.py ur_type:=ur3e robot_ip:=192.168.1.102 launch_rviz:=true
-```
-14. Send some goal to the Joint Trajectory Controller by using a demo node from ros2_control_demos package by starting the following command in another terminal:
+13. Send some goal to the Joint Trajectory Controller by using a demo node from ros2_control_demos package by starting the following command in another terminal:
 ```
 ros2 launch ur_bringup test_joint_trajectory_controller.launch.py
 ```
-15. To test the driver with the example MoveIt-setup, first start the controllers with the command at [11] then start MoveIt.
+14. To test the driver with the example MoveIt-setup, first start the controllers with the command at [11] then start MoveIt.
 ```
-ros2 launch ur_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:=192.168.1.102 launch_rviz:=true
+ros2 launch ur_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true
 ```
 
 
