@@ -55,6 +55,7 @@ These tools will be installed in step 3. Ignore it if they are already installed
   * For Ubuntu:
   ```
   xhost +local:*
+  Or xhost +local:docker (for docker)
   ```
 
 
@@ -86,7 +87,13 @@ git clone https://github.com/ccbts/084_ccbts_utils.git
   chmod +x ./084_ccbts_utils/webots_ros2/setup_project_mac.sh;
   /bin/bash ./084_ccbts_utils/webots_ros2/setup_project_mac.sh
   ```
-4. Build the docker (May need "sudo"):
+4. Add the user to the sudo group:
+```
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker
+```
+5. Build the docker (May need "sudo"):
 * With GPU:
   ```
   docker-compose -f 084_ccbts_utils/webots_ros2/compose-ubuntu.yaml build
@@ -95,7 +102,7 @@ git clone https://github.com/ccbts/084_ccbts_utils.git
   ```
   docker-compose -f 084_ccbts_utils/webots_ros2/compose-ubuntu-nogpu.yaml build
   ```
-5. Run the docker (May need "sudo"):
+6. Run the docker (May need "sudo"). Remember you may need to run **xhost +local:docker** every time you run this command:
 * If there is GPU on the system:
   ```
   docker run --gpus=all -it -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw ros2_webots
@@ -104,7 +111,7 @@ git clone https://github.com/ccbts/084_ccbts_utils.git
   ```
   docker run --rm -it --user=root -e DISPLAY -e TERM   -e QT_X11_NO_MITSHM=1  -v /tmp/.X11-unix:/tmp/.X11-unix   -v /etc/localtime:/etc/localtime:ro  ros2_webots
   ```
-6. By now, you already set up and can interact with ROS2 and Webots in docker. If you also want to clone the cocobots repositories, then follow the rest of the instructions inside the container. Remember to source everytime you open a new terminal:
+7. By now, you already set up and can interact with ROS2 and Webots in docker. If you also want to clone the cocobots repositories, then follow the rest of the instructions inside the container. Remember to source everytime you open a new terminal:
 ```
 cd cocobots_ws/src/;
 git clone git@github.com:ccbts/085_ccbts_env.git;
@@ -113,11 +120,11 @@ colcon build;
 source install/local_setup.bash;
 export PYTHONPATH=${PYTHONPATH}:/home/${USER}/cocobots_ws/install/ccbts_environment/lib/python3.8/site-packages
 ```
-7. To launch the simulation, run this command, otherwise, to control the UR from ROS2, move to step 8 to install the drivers:
+8. To launch the simulation, run this command, otherwise, to control the UR from ROS2, move to step 8 to install the drivers:
 ```
 ros2 launch ccbts_environment cocobots_launch.py
 ```
-8. To manipulate the Universal Robot arm, install the UR driver. In the cocobots_ws directory run:
+9. To manipulate the Universal Robot arm, install the UR driver. In the cocobots_ws directory run:
 ```
 git clone -b foxy https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git src/Universal_Robots_ROS2_Driver
 vcs import src --skip-existing --input src/Universal_Robots_ROS2_Driver/Universal_Robots_ROS2_Driver.repos
@@ -125,13 +132,9 @@ rosdep install --ignore-src --from-paths src -y -r
 colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
 source install/setup.bash
 ```
-9. Install the moveit package and dependencies. In the cocobots_ws directory run:
+10. Install the moveit package and dependencies. In the cocobots_ws directory run:
 ```
-vcs import src --skip-existing --input src/Universal_Robots_ROS2_Driver/MoveIt_Support.repos
-vcs import src --skip-existing --input src/moveit2/moveit2.repos
-rosdep install --ignore-src --from-paths src -y -r
-colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
-source install/setup.bash
+sudo apt-get install ros-foxy-moveit ros-foxy-warehouse-ros-mongo
 ``` 
 <!-- 10. Create the connection between the PC and the robot. Connect the PC with the ethernet cable of the UR. Then open Network Settings and create a new Wired (Ethernet) connection with these settings. You may want to name this new connection UR or something similar:
 ```
@@ -141,18 +144,36 @@ Address: 192.168.1.101
 Netmask: 255.255.255.0
 Gateway: 192.168.1.1
 ``` -->
-10. To connect to the UR robot, you have to be connected to the same network that the UR is connected to, and identify its IP address (alternatively, you can also establish an ethernet connection). Make sure UR is turned on and then run the launch file that starts the robot driver and the controllers:
+11. To connect to the UR robot, you have to be connected to the same network that the UR is connected to, and identify its IP address (alternatively, you can also establish an ethernet connection). The run the launch file that starts the robot driver and the controllers:
 ```
-ros2 launch ur_bringup ur_control.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true
+ros2 launch ur_bringup ur_control.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true reverse_ip:=[your ip address. Find it with 'ifconfig'] limited:=true
 ```
-11. Send some goal to the Joint Trajectory Controller by using a demo node from ros2_control_demos package by starting the following command in another terminal:
+12. Send some goal to the Joint Trajectory Controller by using a demo node from ros2_control_demos package by starting the following command in another terminal:
 ```
 ros2 launch ur_bringup test_joint_trajectory_controller.launch.py
 ```
-12. To test the driver with the example MoveIt-setup, first start the controllers with the command at [11] then start MoveIt.
+13. To test the driver with the example MoveIt-setup, first start the controllers with the command at [11] then start MoveIt.
 ```
-ros2 launch ur_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true
+# Open a new terminal and see running containers
+docker ps
+# Identify the container ID of ros2_webots, and connect to it
+docker exec -it [container id] bash
+ros2 launch ur_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true reverse_ip:=[your ip address. Find it with 'ifconfig']
 ```
+14. To save the current state of the docker and be able to use it again
+```
+# Open a new terminal and see running containers
+docker ps
+# Identify the container ID of ros2_webots, and save its state
+docker commit [container id] [container new name, eg ros2_webots_ur]
+```
+
+### Tips
+* To be able to edit code from within the container, run the container from a terminal:
+```
+docker run --gpus=all -it -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw ros2_webots
+```
+Open VSCode, download the 'Remote - Containers' extension, click on the green bottom-left button, select 'Attach to running container' and choose the running container
 
 
 
@@ -241,11 +262,7 @@ source install/setup.bash
 ```
 11. Install the moveit package and dependencies. In the cocobots_ws directory run:
 ```
-vcs import src --skip-existing --input src/Universal_Robots_ROS2_Driver/MoveIt_Support.repos
-vcs import src --skip-existing --input src/moveit2/moveit2.repos
-rosdep install --ignore-src --from-paths src -y -r
-colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
-source install/setup.bash
+sudo apt-get install ros-foxy-moveit ros-foxy-warehouse-ros-mongo
 ``` 
 <!-- 12. Create the connection between the PC and the robot. Connect the PC with the ethernet cable of the UR. Then open Network Settings and create a new Wired (Ethernet) connection with these settings. You may want to name this new connection UR or something similar:
 ```
@@ -257,7 +274,7 @@ Gateway: 192.168.1.1
 ``` -->
 12. To connect to the UR robot, you have to be connected to the same network that the UR is connected to, and identify its IP address (alternatively, you can also establish an ethernet connection). The run the launch file that starts the robot driver and the controllers:
 ```
-ros2 launch ur_bringup ur_control.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true
+ros2 launch ur_bringup ur_control.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true reverse_ip:=[your ip address. Find it with 'ipconfig'] limited:=true
 ```
 13. Send some goal to the Joint Trajectory Controller by using a demo node from ros2_control_demos package by starting the following command in another terminal:
 ```
@@ -265,9 +282,22 @@ ros2 launch ur_bringup test_joint_trajectory_controller.launch.py
 ```
 14. To test the driver with the example MoveIt-setup, first start the controllers with the command at [11] then start MoveIt.
 ```
-ros2 launch ur_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true
+# Open a new terminal and see running containers
+docker ps
+# Identify the container ID of ros2_webots, and connect to it
+docker exec -it [container id] bash
+ros2 launch ur_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true reverse_ip:=[your ip address. Find it with 'ipconfig']
+```
+15. To save the current state of the docker and be able to use it again
+```
+# Open a new terminal and see running containers
+docker ps
+# Identify the container ID of ros2_webots, and save its state
+docker commit [container id] [container new name, eg ros2_webots_ur]
 ```
 
+## Webots Tips
+* You have to modify the ur3e_environment/ur3e_driver.py to control the UR3e as you want to. An example can be found [here](https://github.com/cyberbotics/webots_ros2/wiki/Example-Universal-Robots) with this [controller](https://github.com/cyberbotics/webots_ros2/blob/master/webots_ros2_universal_robot/webots_ros2_universal_robot/ur5e_controller.py)
 
 
 ## Troubleshooting
@@ -275,6 +305,14 @@ ros2 launch ur_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 l
   * Make sure to run 'source install/setup.bash'
 2. Webots is not opening
   * Make sure DISPLAY had been set correctly by "echo $DISPLAY", and that you have an X server running
+  * If it still doesn't work, run:
+  ```
+  export LIBGL_ALWAYS_INDIRECT=0
+  ```
+  * Segmentation fault, run this (which will force Webots to run on CPU):
+  ```
+  export LIBGL_ALWAYS_SOFTWARE=0
+  ```
 3. Could not load the Qt platform plugin “xcb” … even though it was found
   * Xserver error. Make sure you ran all the steps of the tutorial ([Windows](https://techcommunity.microsoft.com/t5/windows-dev-appconsult/running-wsl-gui-apps-on-windows-10/ba-p/1493242), [Mac](https://affolter.net/running-a-docker-container-with-gui-on-mac-os/)) for setting the Xserver, and that the DISPLAY variable has been set correctly
   * If running on MAC, try this before going through the tutorial
@@ -288,6 +326,10 @@ ros2 launch ur_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 l
   or this:
   ```
   export DISPLAY=$(route.exe print | grep 0.0.0.0 | head -1 | awk '{print $4}'):0.0
+  ```
+  * If running on Ubuntu:
+  ```
+  xhost +local:*
   ```
 4. If the GUI tools don’t work (like rviz):
 * Try using the environmental variable LIBGL_ALWAYS_INDIRECT:
