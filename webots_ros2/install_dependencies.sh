@@ -57,11 +57,15 @@ echo "depthAI driver installed successfully"
 # Install the environment
 export CCBTS_WS=~/cocobots_ws
 cd $CCBTS_WS
-git clone git@github.com:ccbts/085_ccbts_env.git src/085_ccbts_env
+git clone git@github.com:ccbts/085_ccbts_env.git src/ccbts_webots
+echo "Cocobots Webots environment installed successfully"
+
+git clone git@github.com:ccbts/092_ccbts_bringup.git src/ccbts_bringup
+echo "Cocobots UR launch files installed successfully"
+
 colcon build
 source install/setup.bash
 export PYTHONPATH=${PYTHONPATH}:/home/${USER}/cocobots_ws/install/ccbts_environment/lib/python3.8/site-packages
-echo "Cocobots Webots environment installed successfully"
 
 # Source ros2 environment (update bashrc)
 echo "source /home/root/dai_ws/install/setup.bash" >> /home/$USER/.bashrc

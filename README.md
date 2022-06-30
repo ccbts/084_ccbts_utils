@@ -129,7 +129,7 @@ ssh-keygen -F github.com || ssh-keyscan github.com >>/root/.ssh/known_hosts
 ```
 9. To launch the simulation, run this command, otherwise, to control the UR from ROS2, move to step 8 to install the drivers:
 ```
-ros2 launch ccbts_environment cocobots_launch.py
+ros2 launch ccbts_webots ccbts_webots_launch.py
 ```
 
 <!-- 10. Create the connection between the PC and the robot. Connect the PC with the ethernet cable of the UR. Then open Network Settings and create a new Wired (Ethernet) connection with these settings. You may want to name this new connection UR or something similar:
@@ -150,12 +150,12 @@ source install/setup.bash
 ```
 11. Make sure that you installed the [required module in the UR robot](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/foxy#hardware-setup). To connect to the UR robot, you have to be connected to the same network that the UR is connected to, and identify its IP address (alternatively, you can also establish an ethernet connection). Then run the launch file that starts the robot driver and the controllers:
 ```
-ros2 launch ur_bringup ur_control.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true reverse_ip:=[your ip address. Find it with 'ifconfig'] limited:=true
+ros2 launch ccbts_bringup ur_control.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true reverse_ip:=[your ip address. Find it with 'ifconfig'] limited:=true
 ```
 12. In the Program tab of the teach pendant of UR, navigate to the URCaps section on the left and add the external control to the robot program by clicking on it. The program can then be executed by pressing the play button. Make sure the robot is turned on. Now you are connected to the robot arm via ROS.
 13. Send some goal to the Joint Trajectory Controller by using a demo node from ros2_control_demos package by starting the following command in another terminal:
 ```
-ros2 launch ur_bringup test_joint_trajectory_controller.launch.py
+ros2 launch ccbts_bringup test_joint_trajectory_controller.launch.py
 ```
 14. To test the driver with the example MoveIt-setup, first start the controllers with the command at [11] then start MoveIt.
 ```
@@ -163,7 +163,7 @@ ros2 launch ur_bringup test_joint_trajectory_controller.launch.py
 docker ps
 # Identify the container ID of ros2_webots, and connect to it
 docker start -i [container id]
-ros2 launch ur_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true reverse_ip:=[your ip address. Find it with 'ifconfig']
+ros2 launch ccbts_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true reverse_ip:=[your ip address. Find it with 'ifconfig']
 ```
 15. To save the current state of the docker and be able to use it again
 ```
@@ -259,7 +259,7 @@ echo "export DISPLAY=$(grep nameserver /etc/resolv.conf | awk '{print $2}'):0.0"
 ```
 9. To launch the simulation, run this command, otherwise, to control the UR from ROS2, move to step 10 to install the drivers:
 ```
-ros2 launch ccbts_environment cocobots_launch.py
+ros2 launch ccbts_webots ccbts_webots_launch.py
 ```
 10. Replace "{{SERVER_IP_REPLACE}}" of the file ur_driver_ws/src/Universal_Robots_ROS2_Driver/ur_robot_driver/resources/ros_control.urscript, to your host IP and run:
 ```
@@ -271,16 +271,16 @@ source install/setup.bash
 ```
 11. Make sure that you installed the [required module in the UR robot](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/foxy#hardware-setup). To connect to the UR robot, you have to be connected to the same network that the UR is connected to, and identify its IP address (alternatively, you can also establish an ethernet connection). Then run the launch file that starts the robot driver and the controllers:
 ```
-ros2 launch ur_bringup ur_control.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true reverse_ip:=[your ip address. Find it with 'ifconfig'] limited:=true
+ros2 launch ccbts_bringup ur_control.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true reverse_ip:=[your ip address. Find it with 'ifconfig'] limited:=true
 ```
 12. In the Program tab of the teach pendant of UR, navigate to the URCaps section on the left and add the external control to the robot program by clicking on it. The program can then be executed by pressing the play button. Make sure the robot is turned on. Now you are connected to the robot arm via ROS.
 13. Send some goal to the Joint Trajectory Controller by using a demo node from ros2_control_demos package by starting the following command in another terminal:
 ```
-ros2 launch ur_bringup test_joint_trajectory_controller.launch.py
+ros2 launch ccbts_bringup test_joint_trajectory_controller.launch.py
 ```
 14. To test the driver with the example MoveIt-setup, first start the controllers with the command at [11] then start MoveIt in a new terminal.
 ```
-ros2 launch ur_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true reverse_ip:=[your ip address. Find it with 'ifconfig']
+ros2 launch ccbts_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true reverse_ip:=[your ip address. Find it with 'ifconfig']
 ```
 
 <!-- 12. Create the connection between the PC and the robot. Connect the PC with the ethernet cable of the UR. Then open Network Settings and create a new Wired (Ethernet) connection with these settings. You may want to name this new connection UR or something similar:
