@@ -152,8 +152,8 @@ RUN apt-get update \
   libx11-6
 
 # install rocker
-RUN apt-get update && apt-get install -y \
-    python3-rocker
+# RUN apt-get update && apt-get install -y \
+#     python3-rocker
 
 # Env vars for the nvidia-container-runtime.
 ENV NVIDIA_VISIBLE_DEVICES all
@@ -193,6 +193,8 @@ RUN echo "source /opt/ros/foxy/setup.bash" >> /home/$USER/.bashrc
 RUN echo "source /home/root/cocobots_ws/install/setup.bash" >> /home/$USER/.bashrc
 
 COPY ./entrypoint.sh /home/${USER}/cocobots_ws/docker/entrypoint.sh
+COPY ./install_dependencies.sh /home/${USER}/cocobots_ws/install_dependencies.sh
 RUN sudo chmod +x /home/${USER}/cocobots_ws/docker/entrypoint.sh
+RUN sudo chmod +x /home/${USER}/cocobots_ws/install_dependencies.sh
 ENTRYPOINT ["/home/root/cocobots_ws/docker/entrypoint.sh"]
 CMD ["bash"]
