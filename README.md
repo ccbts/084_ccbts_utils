@@ -111,7 +111,7 @@ newgrp docker
   ```
   docker run --rm -it --user=root -e DISPLAY -e TERM   -e QT_X11_NO_MITSHM=1  -v /tmp/.X11-unix:/tmp/.X11-unix   -v /etc/localtime:/etc/localtime:ro  -p 50001-50003:50001-50003 -p 29999:29999 --device-cgroup-rule='c 189:* rmw' ros2_webots
   ```
-7. By now, you already set up and can interact with ROS2 and Webots in docker. If you also want to clone the cocobots repositories, then follow the rest of the instructions inside the container. Remember to source everytime you open a new terminal. First we have to create a new ssh code to clone the repositories of the project:
+7. By now, you already set up and can interact with ROS2 and Webots in docker. If you also want to clone the cocobots repositories, then follow the rest of the instructions inside the container. Remember to source everytime you open a new terminal. First we have to [create a new ssh code](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) to clone the repositories of the project:
 ```
 ssh-keygen -t ed25519 -C ""
 eval "$(ssh-agent -s)"
@@ -120,7 +120,6 @@ cat /root/.ssh/id_ed25519.pub
 # Then select and copy the contents of the id_ed25519.pub file displayed in the terminal to your clipboard
 # Go to your account in Github > Settings > SSH and GPG keys > New SSH key > Add a title (eg Docker) 
 # > Paste in the "Key field" > Add SSH key > Type your password if prompted
-# Instructions here: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account
 ssh-keygen -F github.com || ssh-keyscan github.com >>/root/.ssh/known_hosts
 ```
 8. Install the required dependencies (OAK D Lite and UR drivers and Cocobots specific repos):
@@ -142,7 +141,7 @@ Gateway: 192.168.1.1
 ``` -->
 10. Replace "{{SERVER_IP_REPLACE}}" of the file ur_driver_ws/src/Universal_Robots_ROS2_Driver/ur_robot_driver/resources/ros_control.urscript, to your host IP and run:
 ```
-cd ur_driver_ws;
+cd ~/ur_driver_ws
 colcon build
 source install/setup.bash
 cd ../cocobots_ws;
@@ -164,6 +163,11 @@ docker ps
 # Identify the container ID of ros2_webots, and connect to it
 docker start -i [container id]
 ros2 launch ccbts_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:=192.168.0.4 launch_rviz:=true reverse_ip:=[your ip address. Find it with 'ifconfig']
+```
+For fake hardware:
+```
+ros2 launch ccbts_bringup ur_control.launch.py ur_type:=ur3e robot_ip:=yyy.yyy.yyy.yyy use_fake_hardware:=true launch_rviz:=false
+ros2 launch ccbts_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:="xxx.xxx" use_fake_hardware:=true launch_rviz:=true
 ```
 15. To save the current state of the docker and be able to use it again
 ```
