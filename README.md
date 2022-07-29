@@ -169,7 +169,8 @@ For fake hardware:
 ros2 launch ccbts_bringup ur_control.launch.py ur_type:=ur3e robot_ip:=yyy.yyy.yyy.yyy use_fake_hardware:=true launch_rviz:=false
 ros2 launch ccbts_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:="xxx.xxx" use_fake_hardware:=true launch_rviz:=true
 ```
-15. To save the current state of the docker and be able to use it again
+15. After you start the drivers (and moveit interface)
+16. To save the current state of the docker and be able to use it again
 ```
 # Open a new terminal and see running containers
 docker ps
