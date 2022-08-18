@@ -1,6 +1,9 @@
 # Cocobots Utilities Repository
 
-This repository consists of dockerfiles and installation guidelines for ROS2 and Webots. 
+This repository consists of guidelines to setup ROS2 and Webots with a UR3e simulation environment. Documentation can be found [here](https://github.com/ccbts/084_ccbts_utils/wiki). 
+
+<!-- 
+This repository consists of guidelines to setup ROS2 and Webots with a UR3e simulation environment. Documentation can be found here.
 
 ## System requirements
 
@@ -10,39 +13,36 @@ For this, make sure you have, or update to the latest GPU drives from [here](htt
 The following operating systems are supported:
 * Linux (preferred) 
 * Windows through Windows Subsystem for Linux (WSL). To install WSL, follow these [guidelines](https://docs.microsoft.com/en-us/windows/wsl/install). A current limitation is that [nvidia-docker2](https://docs.nvidia.com/cuda/wsl-user-guide/index.html#known-limitations-for-linux-cuda-apps) for WSL is still under development and for that reason ROS2 and Webots can only be installed through docker without GPU support. For a GPU system a bash script will be provided instead of docker. 
-* Mac (it doesn't work on some Macs due to limited support of OpenGL)
+* Mac (it doesn't work on some Macs due to limited support of OpenGL) -->
 
-<!-- ## Dependencies
+
+
+
+<!-- *************************************
+## Dependencies
 * For WSL, install [Docker](https://docs.docker.com/get-docker/) 
 
 ## [Optionally] Configure WSL2 through Visual Studio Code
-1. Download and install [Visual Studio Code (VSC)](https://code.visualstudio.com/download)
-2. Open VSC and download the "Remote - WSL" and "Remote - Containers" extensions from the Extensions tab on the left hand side.
-3. From the green icon on the left-down corner, choose "New WSL Window"
-4. You can now interact with the Ubuntu documents and terminal -->
+1. Download and install [Visual Studio -->
 
-<!-- </details> -->
-
-## Installation guidelines
-
-This repository contains two options. 
+<!-- 
 * **I. ROS2 Foxy - Webots on Ubuntu or Mac (with or without GPU)**
 * **II. ROS2 Foxy - Webots on WSL (with or without GPU)**
 
-Follow the one suitable for your System:
+Follow the one suitable for your System: -->
 
 
 <!-- </details> -->
-
+<!-- 
 ## I. ROS2 Foxy - Webots on Ubuntu or Mac (with or without GPU)
 
-A ROS2 Foxy (docker) setup with all the required dependencies for this project (and it will be updated on the go), coupled with Webots simulator R2022a in a Ubuntu 20.04 environment. The setup may work with or without GPU (follow the corresponding guidelines). 
+A ROS2 Foxy (docker) setup with all the required dependencies for this project (and it will be updated on the go), coupled with Webots simulator R2022a in a Ubuntu 20.04 environment. The setup may work with or without GPU (follow the corresponding guidelines).  -->
 
 <!-- <details>
   <summary>Click to expand!</summary>
   
 ## II. ROS2 + Webots on NVidia docker -->
-
+<!-- 
 ### Prerequisites
 
 These tools will be installed in step 3. Ignore it if they are already installed 
@@ -129,9 +129,11 @@ ssh-keygen -F github.com || ssh-keyscan github.com >>/root/.ssh/known_hosts
 9. To launch the simulation, run this command, otherwise, to control the UR from ROS2, move to step 8 to install the drivers:
 ```
 ros2 launch ccbts_webots ccbts_webots_launch.py
-```
+``` -->
 
-<!-- 10. Create the connection between the PC and the robot. Connect the PC with the ethernet cable of the UR. Then open Network Settings and create a new Wired (Ethernet) connection with these settings. You may want to name this new connection UR or something similar:
+<!-- 
+***************************
+10. Create the connection between the PC and the robot. Connect the PC with the ethernet cable of the UR. Then open Network Settings and create a new Wired (Ethernet) connection with these settings. You may want to name this new connection UR or something similar:
 ```
 IPv4
 Manual
@@ -139,6 +141,8 @@ Address: 192.168.1.101
 Netmask: 255.255.255.0
 Gateway: 192.168.1.1
 ``` -->
+
+<!-- 
 10. Replace "{{SERVER_IP_REPLACE}}" of the file ur_driver_ws/src/Universal_Robots_ROS2_Driver/ur_robot_driver/resources/ros_control.urscript, to your host IP and run:
 ```
 cd ~/ur_driver_ws
@@ -190,18 +194,22 @@ Open VSCode, download the 'Remote - Containers' extension, click on the green bo
 ## II. ROS2 Foxy - Webots on WSL (with or without GPU)
 
 A ROS2 Foxy setup with all the required dependencies for this project (and it will be updated on the go), coupled with Webots simulator R2022a in a WSL environment. 
-The setup may work with or without GPU (follow the corresponding guidelines). 
+The setup may work with or without GPU (follow the corresponding guidelines).  -->
 
 <!-- <details>
   <summary>Click to expand!</summary>
   
 ## II. ROS2 + Webots on NVidia docker -->
+<!-- 
+### Prerequisites -->
 
-### Prerequisites
-
-<!-- * [docker](https://docs.docker.com/engine/install/ubuntu/) (and make sure is running)
+<!-- *
+******************************************
+ [docker](https://docs.docker.com/engine/install/ubuntu/) (and make sure is running)
 * [docker-compose](https://docs.docker.com/compose/install/)
 * For WSL: [docker-nvidia2](https://docs.nvidia.com/cuda/wsl-user-guide/index.html) -->
+
+<!-- 
 The nvidia-docker2 for WSL currently does not support OpenGL applications like Webots, thus, it cannot be installed through a docker. For that reason, a bash script (step 3) will be used instead, or ignore that step if already these tools are installed:
 
 * [ROS2 Foxy](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html)
@@ -290,8 +298,14 @@ For fake hardware:
 ```
 ros2 launch ccbts_bringup ur_control.launch.py ur_type:=ur3e robot_ip:=yyy.yyy.yyy.yyy use_fake_hardware:=true launch_rviz:=false
 ros2 launch ccbts_bringup ur_moveit.launch.py ur_type:=ur3e robot_ip:="xxx.xxx" use_fake_hardware:=true launch_rviz:=true
-```
-<!-- 12. Create the connection between the PC and the robot. Connect the PC with the ethernet cable of the UR. Then open Network Settings and create a new Wired (Ethernet) connection with these settings. You may want to name this new connection UR or something similar:
+``` -->
+
+
+
+
+<!-- 
+**************************************
+12. Create the connection between the PC and the robot. Connect the PC with the ethernet cable of the UR. Then open Network Settings and create a new Wired (Ethernet) connection with these settings. You may want to name this new connection UR or something similar:
 ```
 IPv4
 Manual
@@ -300,7 +314,7 @@ Netmask: 255.255.255.0
 Gateway: 192.168.1.1
 ``` -->
 
-
+<!-- 
 ## Webots Tips
 * You have to modify the ur3e_environment/ur3e_driver.py to control the UR3e as you want to. An example can be found [here](https://github.com/cyberbotics/webots_ros2/wiki/Example-Universal-Robots) with this [controller](https://github.com/cyberbotics/webots_ros2/blob/master/webots_ros2_universal_robot/webots_ros2_universal_robot/ur5e_controller.py)
 
@@ -344,7 +358,7 @@ export LIBGL_ALWAYS_INDIRECT=0
 * ImportError: libQt5Core.so.5: cannot open shared object file: No such file or directory:
 ```
 sudo strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5
-```
+``` -->
 
 
 
