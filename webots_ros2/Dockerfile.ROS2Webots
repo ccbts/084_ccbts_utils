@@ -96,6 +96,7 @@ RUN apt-get update && apt-get install -y \
     ros-foxy-desktop \
     ros-foxy-webots-ros2 \
     ros-foxy-webots-ros2-driver \
+    ros-foxy-tf-transformations \
     ~nros-foxy-rqt*
 
 # install bootstrap tools

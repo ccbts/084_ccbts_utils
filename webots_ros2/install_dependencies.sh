@@ -12,6 +12,7 @@ sudo apt-get update && apt-get install -y \
         ros-foxy-ros2-controllers \
         ros-foxy-moveit \
         ros-foxy-warehouse-ros-mongo \
+        ros-foxy-tf-transformations \
         ros-foxy-srdfdom 
 
 export UR_DRIVER_WS=~/ur_driver_ws
