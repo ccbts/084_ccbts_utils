@@ -15,6 +15,8 @@ sudo apt-get update && apt-get install -y \
         ros-foxy-tf-transformations \
         ros-foxy-srdfdom 
 
+sudo pip3 install transforms3d
+
 export UR_DRIVER_WS=~/ur_driver_ws
 mkdir -p $UR_DRIVER_WS/src
 cd $UR_DRIVER_WS
