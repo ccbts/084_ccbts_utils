@@ -15,7 +15,6 @@ docker-run-prod:
 
 docker-run-devel:
 	docker run -e DISPLAY -e PLATFORM=devel \
-		--gpus=all \
 		-v ${SRC}:/ccbts/cocobots_ws:rw \
 		-v ~/.Xauthority:/ccbts/.Xauthority:ro \
 		-v /tmp/.X11-unix:/tmp/.X11-unix:ro \
@@ -23,7 +22,7 @@ docker-run-devel:
 		-p 50001-50003:50001-50003 \
 		-p 29999:29999 \
 		-p 30001-30003:30001-30003 \
-		--device-cgroup-rule='c 189:* rmw' 
+		--device-cgroup-rule='c 189:* rmw' \
 		--net=host \
 		--cap-add SYS_ADMIN \
 		--restart unless-stopped \
