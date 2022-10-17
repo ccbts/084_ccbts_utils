@@ -21,7 +21,7 @@ detect_ros_ws_in_path() {
             }
         '
     )"
-    default_ws="${pwd_ws:-$HOME/cocobots_ws}"
+    default_ws="${pwd_ws:-/ccbts/cocobots_ws}"
 }
 
 ## Print shortcut manual

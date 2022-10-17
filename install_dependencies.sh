@@ -3,16 +3,39 @@
 # Usage: ./setup_project.sh (it requires sudo!)
 
 # --------------------------- #
+## webots_ros2
+# --------------------------- #
+
+
+# Retrieve the sources
+export WEBOTS_ROS2_WS=~/webots_ros2
+mkdir -p $WEBOTS_ROS2_WS/src
+cd $WEBOTS_ROS2_WS
+git clone --recurse-submodules -b 1.2.3 https://github.com/cyberbotics/webots_ros2.git src/webots_ros2
+
+# Install dependencies
+sudo apt install python3-pip python3-rosdep python3-colcon-common-extensions
+sudo rosdep init && rosdep update
+rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO
+
+# Building packages
+colcon build
+
+# Source this workspace (careful when also sourcing others)
+source install/local_setup.bash
+
+
+# --------------------------- #
 ## UR Driver
 # --------------------------- #
 
 # Install ros2 control, moveit and other dependencies
-sudo apt-get update && apt-get install -y \
-		ros-foxy-ros2-control \
+sudo apt-get update 
+sudo apt-get install -y \
+	ros-foxy-ros2-control \
         ros-foxy-ros2-controllers \
         ros-foxy-moveit \
         ros-foxy-warehouse-ros-mongo \
-        ros-foxy-webots-ros2-control \
         ros-foxy-tf-transformations \
         ros-foxy-srdfdom 
 

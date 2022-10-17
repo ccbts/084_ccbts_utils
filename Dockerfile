@@ -16,7 +16,7 @@ RUN echo 'Europe/Belgrade' > /etc/timezone && \
 
 # General dependencies
 RUN apt-get -y install apt-utils gnupg2 lsb-release sudo rsync python3 python3-pip \
-               git git-lfs wget curl vim pciutils keyboard-configuration
+               git git-lfs wget curl vim pciutils keyboard-configuration iputils-ping
 
 COPY ./config/ps1.sh /tmp
 
