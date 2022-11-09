@@ -115,6 +115,7 @@ source install/setup.bash
 export PYTHONPATH=${PYTHONPATH}:/ccbts/cocobots_ws/install/ccbts_webots/lib/python3.8/site-packages
 
 # Source ros2 environment (update bashrc)
+echo "source /ccbts/webots_ros2/install/setup.bash" >> /ccbts/.bashrc
 echo "source /ccbts/dai_ws/install/setup.bash" >> /ccbts/.bashrc
 echo "source /ccbts/ur_driver_ws/install/setup.bash" >> /ccbts/.bashrc
 echo "source /ccbts/cocobots_ws/install/setup.bash" >> /ccbts/.bashrc
